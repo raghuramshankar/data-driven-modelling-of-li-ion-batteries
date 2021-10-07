@@ -5,7 +5,7 @@ import time
 # import matplotlib.pyplot as plt
 # import pandas as pd
 
-jax.config.update('jax_platform_name', 'cpu')
+jax.config.update('jax_platform_name', 'gpu')
 
 @jit
 def func(x0):
@@ -17,7 +17,8 @@ def loss(x0, jac = 1, hes = 1):
     jac = jax.grad(func)(x0)
     hes = jax.grad(jax.grad(func))(x0)
     delX = -jac/hes
-    return jac, hes, delX
+    x0 = x0 + t * delX
+    return jac, x0
 
 if __name__ == '__main__':
     start = time.time()
@@ -27,8 +28,7 @@ if __name__ == '__main__':
     # hes = 1
     t = 0.01
     while abs(jac) >= 1e-7:
-        jac, hes, delX = loss(x0)
-        x0 = x0 + t * delX
+        jac, x0 = loss(x0)
         # print('jac = ', jac)
         # print('x0 in deg = ', x0 * 180/jnp.pi)
 
