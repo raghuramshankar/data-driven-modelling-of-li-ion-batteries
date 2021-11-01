@@ -17,7 +17,7 @@ class cellDataOCV():
         self.df = self.df.apply(pd.to_numeric, errors="ignore")
         self.df["Time"] = np.linspace(1, len(self.df.index), len(self.df.index))
         self.time = [time for time in self.df["Time"]]
-        self.OCV = [voltage for voltage in self.df["Voltage"]]
+        self.voltage = [voltage for voltage in self.df["Voltage"]]
         self.current = [current for current in self.df["Current"]]
         print("extract done")
 
@@ -28,28 +28,33 @@ class cellDataOCV():
         self.chgTime = [self.df["Time"].to_numpy()[i] for i in range(len(self.df)) if self.df["Status"].to_numpy()[i] == "CHA"]
         self.chgTime = self.chgTime - self.chgTime[0]
         self.pauOCV = [self.df["Voltage"].to_numpy()[i] for i in range(len(self.df)) if self.df["Status"].to_numpy()[i] == "PAU"]
+        self.disCap = [self.df["Capacity"].to_numpy()[i] for i in range(len(self.df)) if self.df["Status"].to_numpy()[i] == "DCH"]
         print("OCV done")
 
     def computeOCV(self):
         self.OCV = (self.disOCV + self.chgOCV[0:len(self.disOCV)])/2
+        self.capacity = self.disCap[-1]
+        self.SOC = self.disCap/self.capacity
         print("compute done")
 
     def saveOCV(self):
         self.dfOCV = {}
         self.dfOCV.update({"time": self.chgTime[0:len(self.disOCV)]})
         self.dfOCV.update({"OCV": self.OCV})
+        self.dfOCV.update({"SOC": self.SOC})
         self.dfOCV = pd.DataFrame(self.dfOCV)
         self.dfOCV.to_csv("results/OCV--" + self.filename.replace("/", "--"), index=False)
+        print("save done")
 
     def loadOCV(self):
         pathname = "results/"
         filenames = [filename for filename in os.listdir(pathname) if filename.endswith(".csv")]
         index = 0
         self.dfOCV = pd.read_csv(pathname + filenames[index])
-        print("load done")
         self.time = self.dfOCV["time"]
         self.OCV = self.dfOCV["OCV"]
+        print("load done")
 
     def extractDynamic(self):
-        # self.dynVoltage = 
+        # self.dynOCV = 
         pass
