@@ -17,8 +17,9 @@ class cellDataOCV():
         self.df = self.df.apply(pd.to_numeric, errors="ignore")
         self.df["Time"] = np.linspace(1, len(self.df.index), len(self.df.index))
         self.time = [time for time in self.df["Time"]]
-        self.voltage = [voltage for voltage in self.df["Voltage"]]
-        self.current = [current for current in self.df["Current"]]
+        self.volt = [voltage for voltage in self.df["Voltage"]]
+        self.curr = [current for current in self.df["Current"]]
+        self.disCap = ([capacity for capacity in self.df["Capacity"]])
         print("extract done")
 
     def extractOCV(self):
@@ -33,8 +34,8 @@ class cellDataOCV():
 
     def computeOCV(self):
         self.OCV = (self.disOCV + self.chgOCV[0:len(self.disOCV)])/2
-        self.capacity = self.disCap[-1]
-        self.SOC = self.disCap/self.capacity
+        self.disCapacity = self.disCap[-1]
+        self.SOC = self.disCap/self.disCapacity
         print("compute done")
 
     def saveOCV(self):
@@ -42,6 +43,7 @@ class cellDataOCV():
         self.dfOCV.update({"time": self.chgTime[0:len(self.disOCV)]})
         self.dfOCV.update({"OCV": self.OCV})
         self.dfOCV.update({"SOC": self.SOC})
+        self.dfOCV.update({"disCapacity": [self.disCapacity for _ in range(len(self.OCV))]})
         self.dfOCV = pd.DataFrame(self.dfOCV)
         self.dfOCV.to_csv("results/OCV--" + self.filename.replace("/", "--"), index=False)
         print("save done")
@@ -51,8 +53,10 @@ class cellDataOCV():
         filenames = [filename for filename in os.listdir(pathname) if filename.endswith(".csv")]
         index = 0
         self.dfOCV = pd.read_csv(pathname + filenames[index])
-        self.time = self.dfOCV["time"]
-        self.OCV = self.dfOCV["OCV"]
+        self.timeOCV = self.dfOCV["time"].to_numpy()
+        self.voltOCV = self.dfOCV["OCV"].to_numpy()
+        self.SOCOCV = self.dfOCV["SOC"].to_numpy()
+        self.capacity = self.dfOCV["disCapacity"].to_numpy()[0]
         print("load done")
 
     def extractDynamic(self):

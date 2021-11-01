@@ -26,13 +26,13 @@ def main():
     """run OCV functions"""
     cell.extractOCV()
     cell.computeOCV()
-    cell.saveOCV()
+    # cell.saveOCV()
     # cell.loadOCV()
 
-    plot.plotComputedOCV(cell)
+    # plot.plotComputedOCV(cell)
 
     """run dynamic functions"""
-    # cell.extractDynamic()
+    cell.extractDynamic()
     
     
     plt.show()
