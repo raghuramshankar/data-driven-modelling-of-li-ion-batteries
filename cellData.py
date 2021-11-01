@@ -32,5 +32,13 @@ class cellDataOCV():
         self.OCV = (self.disOCV + self.chgOCV[0:len(self.disOCV)])/2
         print("compute done")
 
-    # def extractDynamic(self):
-    #     self.
+    def saveOCV(self):
+        dfOCV = {}
+        dfOCV.update({"time": self.chgTime[0:len(self.disOCV)]})
+        dfOCV.update({"OCV": self.OCV})
+        dfOCV = pd.DataFrame(dfOCV)
+        dfOCV.to_csv("results/OCV--" + self.filename.replace("/", "--"), index=False)
+
+    def extractDynamic(self):
+        # self.dynVoltage = 
+        pass
