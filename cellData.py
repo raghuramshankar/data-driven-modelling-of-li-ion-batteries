@@ -9,10 +9,9 @@ class cellData():
         self.filename = self.pathname + filename
         
     def extractData(self):
-        df = pd.read_csv(self.filename, skiprows=28)
-        df = df.loc[:, ~df.columns.str.contains("^Unnamed")]
-        df = df.drop(0)
-        df = df.apply(pd.to_numeric, errors="ignore")
-        df["Time"] = np.linspace(1, len(df.index), len(df.index))
+        self.df = pd.read_csv(self.filename, skiprows=28)
+        self.df = self.df.loc[:, ~self.df.columns.str.contains("^Unnamed")]
+        self.df = self.df.drop(0)
+        self.df = self.df.apply(pd.to_numeric, errors="ignore")
+        self.df["Time"] = np.linspace(1, len(self.df.index), len(self.df.index))
         print('extract done')
-        return df
