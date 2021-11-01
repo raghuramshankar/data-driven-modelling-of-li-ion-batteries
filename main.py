@@ -3,7 +3,8 @@ from cellData import cellData
 
 def main():
     """define desired cell filename"""
-    filename = "25degC/549_C20DisCh.csv"
+    # filename = "25degC/549_C20DisCh.csv"
+    filename = "25degC/549_Charge.csv"
 
     """define class objects"""
     cell = cellData(filename)
