@@ -62,3 +62,13 @@ class plotData():
         fig2_f4.set_title("Average OCV from \n" + cell.filename)
         fig2_f4.legend()
         fig2_f4.grid(True)
+    
+    def plotLoadedOCV(self, cell):
+        fig3 = plt.figure(figsize=(self.l, self.h))
+        fig3_f1 = fig3.add_subplot(111)
+        fig3_f1.plot(cell.SOCOCV, cell.voltOCV, "b", label="Average OCV")
+        fig3_f1.set_xlabel("SOC [%]")
+        fig3_f1.set_ylabel("Voltage [V]")
+        fig3_f1.set_title("Average OCV from \n" + cell.filename)
+        fig3_f1.legend()
+        fig3_f1.grid(True)

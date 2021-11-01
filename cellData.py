@@ -52,11 +52,12 @@ class cellDataOCV():
         pathname = "results/"
         filenames = [filename for filename in os.listdir(pathname) if filename.endswith(".csv")]
         index = 0
-        self.dfOCV = pd.read_csv(pathname + filenames[index])
+        self.filename = filenames[index]
+        self.dfOCV = pd.read_csv(pathname + self.filename)
         self.timeOCV = self.dfOCV["time"].to_numpy()
         self.voltOCV = self.dfOCV["OCV"].to_numpy()
         self.SOCOCV = self.dfOCV["SOC"].to_numpy()
-        self.capacity = self.dfOCV["disCapacity"].to_numpy()[0]
+        self.capacityOCV = self.dfOCV["disCapacity"].to_numpy()[0]
         print("load done")
 
     def extractDynamic(self):

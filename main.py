@@ -21,15 +21,16 @@ def main():
     """extract from dataset"""
     cell.extractData()
 
-    # plot.plotDataFromDataset(cell)
+    plot.plotDataFromDataset(cell)
 
     """run OCV functions"""
-    cell.extractOCV()
-    cell.computeOCV()
+    # cell.extractOCV()
+    # cell.computeOCV()
     # cell.saveOCV()
-    # cell.loadOCV()
+    cell.loadOCV()
 
     # plot.plotComputedOCV(cell)
+    plot.plotLoadedOCV(cell)
 
     """run dynamic functions"""
     cell.extractDynamic()
