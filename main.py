@@ -18,18 +18,22 @@ def main():
     cell = cellDataOCV(filename, pathname)
     plot = plotData()
 
-    """run OCV functions"""
+    """extract from dataset"""
     cell.extractData()
-    cell.extractOCV()
-    cell.computeOCV()
-    cell.saveOCV()
+    
+    plot.plotDataFromDataset(cell)
+
+    """run OCV functions"""
+    # cell.extractOCV()
+    # cell.computeOCV()
+    # cell.saveOCV()
+    # cell.loadOCV()
+
+    # plot.plotComputedOCV(cell)
 
     """run dynamic functions"""
     cell.extractDynamic()
-
-    """run plotting functions"""
-    # plot.plotDataFromDataset(cell)
-    plot.plotComputedOCV(cell)
+    
     
     plt.show()
 

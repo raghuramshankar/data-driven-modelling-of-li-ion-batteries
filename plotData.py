@@ -6,7 +6,7 @@ matplotlib.rcParams['figure.dpi'] = 150
 
 class plotData():
     def plotDataFromDataset(self, cell):
-        fig1 = plt.figure(figsize=(10.0, 5.0))
+        fig1 = plt.figure(figsize=(12.0, 5.0))
         fig1_f1 = fig1.add_subplot(121)
         fig1_f1.plot(cell.time, cell.OCV, "b", label="Voltage")
         fig1_f1.set_xlabel("Time [s]")
@@ -24,7 +24,7 @@ class plotData():
         fig1_f2.grid(True)
 
     def plotComputedOCV(self, cell):
-        fig2 = plt.figure(figsize=(10.0, 5.0))
+        fig2 = plt.figure(figsize=(12.0, 5.0))
         fig2_f1 = fig2.add_subplot(131)
         fig2_f1.plot(cell.disTime, cell.disOCV, "r", label="Discharge OCV")
         fig2_f1.set_xlabel("Time [s]")

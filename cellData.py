@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pandas as pd
 
@@ -33,11 +35,20 @@ class cellDataOCV():
         print("compute done")
 
     def saveOCV(self):
-        dfOCV = {}
-        dfOCV.update({"time": self.chgTime[0:len(self.disOCV)]})
-        dfOCV.update({"OCV": self.OCV})
-        dfOCV = pd.DataFrame(dfOCV)
-        dfOCV.to_csv("results/OCV--" + self.filename.replace("/", "--"), index=False)
+        self.dfOCV = {}
+        self.dfOCV.update({"time": self.chgTime[0:len(self.disOCV)]})
+        self.dfOCV.update({"OCV": self.OCV})
+        self.dfOCV = pd.DataFrame(self.dfOCV)
+        self.dfOCV.to_csv("results/OCV--" + self.filename.replace("/", "--"), index=False)
+
+    def loadOCV(self):
+        pathname = "results/"
+        filenames = [filename for filename in os.listdir(pathname) if filename.endswith(".csv")]
+        index = 0
+        self.dfOCV = pd.read_csv(pathname + filenames[index])
+        print("load done")
+        self.time = self.dfOCV["time"]
+        self.OCV = self.dfOCV["OCV"]
 
     def extractDynamic(self):
         # self.dynVoltage = 
