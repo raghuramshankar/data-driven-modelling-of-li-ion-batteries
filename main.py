@@ -2,7 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 
-from cellData import cellData
+from cellData import cellDataOCV
 from plotData import plotData
 
 
@@ -11,17 +11,20 @@ def main():
     pathname = "datasets/lg-18650hg2/LG_HG2_Original_Dataset_McMasterUniversity_Jan_2020/"
     temp = "25degC/"
     filenames = [filename for filename in os.listdir(pathname + temp) if filename.endswith(".csv")]
-    filename = temp + filenames[0]
+    index = 0
+    filename = temp + filenames[index]
 
     """define class objects"""
-    cell = cellData(filename, pathname)
+    cell = cellDataOCV(filename, pathname)
     plot = plotData()
 
     """run class functions"""
     cell.extractData()
     cell.extractOCV()
-    plot.plotDataFromDataset(cell)
-    plot.plotExtractedData(cell)
+    cell.computeOCV()
+    # plot.plotDataFromDataset(cell)
+    plot.plotComputedOCV(cell)
+    
     plt.show()
 
 if __name__ == "__main__":
