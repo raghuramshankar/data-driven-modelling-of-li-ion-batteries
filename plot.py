@@ -1,7 +1,7 @@
-import matplotlib
+# import matplotlib
 import matplotlib.pyplot as plt
 
-matplotlib.use("Qt5Agg")
+# matplotlib.use("Qt5Agg")
 
 
 def plotData(df, filename):
