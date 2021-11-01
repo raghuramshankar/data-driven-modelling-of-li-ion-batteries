@@ -2,10 +2,8 @@ import numpy as np
 import pandas as pd
 
 class cellData():
-    def __init__(self, filename):
-        self.pathname = (
-        "datasets/lg-18650hg2/LG_HG2_Original_Dataset_McMasterUniversity_Jan_2020/"
-        )
+    def __init__(self, filename, pathname):
+        self.pathname = pathname
         self.filename = filename
         self.fullname = self.pathname + self.filename
         
