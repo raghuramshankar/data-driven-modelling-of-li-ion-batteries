@@ -5,7 +5,7 @@ import pandas as pd
 
 from cellData import cellData
 from cellExtractOCV import cellExtractOCV
-from cellSim import cellSim
+from cellExtractParams import cellExtractParams
 from plotData import plotData
 
 
@@ -25,7 +25,7 @@ def main():
 
     cellDataObj.extractData()
 
-    plotDataObj.plotDataFromDataset(cellDataObj)
+    # plotDataObj.plotDataFromDataset(cellDataObj)
 
     """extract and save OCV functions"""
     cellExtractOCVObj = cellExtractOCV(cellDataObj)
@@ -35,13 +35,15 @@ def main():
     # plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
     """extract and save dynamic functions"""
-    cellSimObj = cellSim(cellDataObj)
+    cellSimObj = cellExtractParams(cellDataObj)
 
     cellSimObj.loadOCV()
+    cellSimObj.loadCellParams()
     cellSimObj.extractDynamic()
+    cellSimObj.cellSim()
 
-    plotDataObj.plotLoadedOCV(cellSimObj)
-    plotDataObj.plotDynamic(cellSimObj)
+    # plotDataObj.plotLoadedOCV(cellSimObj)
+    # plotDataObj.plotDynamic(cellSimObj)
     
     plt.show()
 
