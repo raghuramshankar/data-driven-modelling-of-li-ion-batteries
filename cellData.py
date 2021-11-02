@@ -3,6 +3,8 @@ import os
 import numpy as np
 import pandas as pd
 
+from funcs import convertToSec
+
 
 class cellDataOCV():
     def __init__(self, filename, pathname):
@@ -15,12 +17,22 @@ class cellDataOCV():
         self.df = self.df.loc[:, ~self.df.columns.str.contains("^Unnamed")]
         self.df = self.df.drop(0)
         self.df = self.df.apply(pd.to_numeric, errors="ignore")
-        self.df["Time"] = np.linspace(1, len(self.df.index), len(self.df.index))
-        self.time = [time for time in self.df["Time"]]
+        # self.df["Time"] = np.linspace(1, len(self.df.index), len(self.df.index))
+        # self.time = [time for time in self.df["Time"]]
+        # self.stepTime = [float(stepTime[-5:]) for stepTime in self.df["Step Time"]]
+        # self.time = [time - self.stepTime[0] for time in self.stepTime]
+        # self.stepTime = [time.strptime(stepTime.split(".")[0], "%H:%M:%S") for stepTime in self.df["Step Time"]]
+        self.progTime = [convertToSec(progTime) for progTime in self.df["Prog Time"]]
+        self.time = [progTime - self.progTime[0] for progTime in self.progTime]
+        self.df["Time"] = [time for time in self.time]
+
         self.volt = [voltage for voltage in self.df["Voltage"]]
-        self.curr = [current for current in self.df["Current"]]
-        self.disCap = ([capacity for capacity in self.df["Capacity"]])
-        print("extract done")
+        self.curr = [- current for current in self.df["Current"]]
+        self.disCap = [capacity for capacity in self.df["Capacity"]]
+        self.dt = np.mean(np.diff(self.time))
+        self.eta = 1.0
+
+        print("extract done from", self.filename)
 
     def extractOCV(self):
         self.disOCV = [self.df["Voltage"].to_numpy()[i] for i in range(len(self.df)) if self.df["Status"].to_numpy()[i] == "DCH"]
@@ -34,8 +46,8 @@ class cellDataOCV():
 
     def computeOCV(self):
         self.OCV = (self.disOCV + self.chgOCV[0:len(self.disOCV)])/2
-        self.disCapacity = self.disCap[-1]
-        self.SOC = self.disCap/self.disCapacity
+        self.disCapacity = - self.disCap[-1]
+        self.SOC = np.flip(np.negative(self.disCap)/self.disCapacity)
         print("compute done")
 
     def saveOCV(self):
@@ -61,5 +73,9 @@ class cellDataOCV():
         print("load done")
 
     def extractDynamic(self):
+        self.initSOC = 1.0
+        self.testSOC = self.initSOC - self.dt/(self.capacityOCV * 3600) * self.eta * np.cumsum(self.curr)
+        # self.testOCV = 
         # self.dynOCV = 
-        pass
+        
+        print('dynamic done')

@@ -1,6 +1,7 @@
 import os
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from cellData import cellDataOCV
 from plotData import plotData
@@ -11,8 +12,10 @@ def main():
     pathname = "datasets/lg-18650hg2/LG_HG2_Original_Dataset_McMasterUniversity_Jan_2020/"
     temp = "25degC/"
     filenames = [filename for filename in os.listdir(pathname + temp) if filename.endswith(".csv")]
-    index = 0
-    filename = temp + filenames[index]
+    d = pd.DataFrame(filenames)
+    d.to_csv("filenames.csv", header=None, index=False)
+    filename = temp + "551_Mixed1.csv"
+    # filename = temp + "549_C20DisCh.csv"
 
     """define class objects"""
     cell = cellDataOCV(filename, pathname)
@@ -23,18 +26,18 @@ def main():
 
     plot.plotDataFromDataset(cell)
 
-    """run OCV functions"""
+    """extract and save OCV functions"""
     # cell.extractOCV()
     # cell.computeOCV()
     # cell.saveOCV()
-    cell.loadOCV()
 
     # plot.plotComputedOCV(cell)
-    plot.plotLoadedOCV(cell)
 
-    """run dynamic functions"""
+    """extract and save dynamic functions"""
+    cell.loadOCV()
     cell.extractDynamic()
-    
+
+    plot.plotLoadedOCV(cell)    
     
     plt.show()
 
