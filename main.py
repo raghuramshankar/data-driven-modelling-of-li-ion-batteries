@@ -24,7 +24,7 @@ def main():
     """extract from dataset"""
     cell.extractData()
 
-    plot.plotDataFromDataset(cell)
+    # plot.plotDataFromDataset(cell)
 
     """extract and save OCV functions"""
     # cell.extractOCV()
@@ -37,7 +37,8 @@ def main():
     cell.loadOCV()
     cell.extractDynamic()
 
-    plot.plotLoadedOCV(cell)    
+    # plot.plotLoadedOCV(cell)
+    plot.plotDynVolt(cell)
     
     plt.show()
 

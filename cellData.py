@@ -17,18 +17,13 @@ class cellDataOCV():
         self.df = self.df.loc[:, ~self.df.columns.str.contains("^Unnamed")]
         self.df = self.df.drop(0)
         self.df = self.df.apply(pd.to_numeric, errors="ignore")
-        # self.df["Time"] = np.linspace(1, len(self.df.index), len(self.df.index))
-        # self.time = [time for time in self.df["Time"]]
-        # self.stepTime = [float(stepTime[-5:]) for stepTime in self.df["Step Time"]]
-        # self.time = [time - self.stepTime[0] for time in self.stepTime]
-        # self.stepTime = [time.strptime(stepTime.split(".")[0], "%H:%M:%S") for stepTime in self.df["Step Time"]]
         self.progTime = [convertToSec(progTime) for progTime in self.df["Prog Time"]]
         self.time = [progTime - self.progTime[0] for progTime in self.progTime]
         self.df["Time"] = [time for time in self.time]
 
-        self.volt = [voltage for voltage in self.df["Voltage"]]
-        self.curr = [- current for current in self.df["Current"]]
-        self.disCap = [capacity for capacity in self.df["Capacity"]]
+        self.volt = np.asarray([voltage for voltage in self.df["Voltage"]])
+        self.curr = np.asarray([- current for current in self.df["Current"]])
+        self.disCap = np.asarray([capacity for capacity in self.df["Capacity"]])
         self.dt = np.mean(np.diff(self.time))
         self.eta = 1.0
 
@@ -64,8 +59,8 @@ class cellDataOCV():
         pathname = "results/"
         filenames = [filename for filename in os.listdir(pathname) if filename.endswith(".csv")]
         index = 0
-        self.filename = filenames[index]
-        self.dfOCV = pd.read_csv(pathname + self.filename)
+        self.filenameOCV = filenames[index]
+        self.dfOCV = pd.read_csv(pathname + self.filenameOCV)
         self.timeOCV = self.dfOCV["time"].to_numpy()
         self.voltOCV = self.dfOCV["OCV"].to_numpy()
         self.SOCOCV = self.dfOCV["SOC"].to_numpy()
@@ -75,7 +70,7 @@ class cellDataOCV():
     def extractDynamic(self):
         self.initSOC = 1.0
         self.testSOC = self.initSOC - self.dt/(self.capacityOCV * 3600) * self.eta * np.cumsum(self.curr)
-        # self.testOCV = 
-        # self.dynOCV = 
+        self.testOCV = [self.voltOCV[np.argmin(abs(self.SOCOCV - soc))] for soc in self.testSOC]
+        self.overPotVolt = self.volt - self.testOCV
         
         print('dynamic done')

@@ -72,3 +72,21 @@ class plotData():
         fig3_f1.set_title("Average OCV from \n" + cell.filename)
         fig3_f1.legend()
         fig3_f1.grid(True)
+
+    def plotDynVolt(self, cell):
+        fig4 = plt.figure(figsize=(self.l, self.h))
+        fig4_f1 = fig4.add_subplot(121)
+        fig4_f1.plot(cell.time, cell.testOCV, "b", label="Test OCV")
+        fig4_f1.set_xlabel("Time [sec]")
+        fig4_f1.set_ylabel("Test OCV [V]")
+        fig4_f1.set_title("Test OCV from \n" + cell.filename)
+        fig4_f1.legend()
+        fig4_f1.grid(True)
+
+        fig4_f2 = fig4.add_subplot(122)
+        fig4_f2.plot(cell.time, cell.overPotVolt, "b", label="Overpotential")
+        fig4_f2.set_xlabel("Time [sec]")
+        fig4_f2.set_ylabel("Overpotential [V]")
+        fig4_f2.set_title("Overpotential from \n" + cell.filename)
+        fig4_f2.legend()
+        fig4_f2.grid(True)
