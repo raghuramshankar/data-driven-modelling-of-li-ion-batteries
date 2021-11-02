@@ -75,7 +75,7 @@ docs/_build/
 target/
 
 # Jupyter Notebook
-.ipynb
+*.ipynb
 .ipynb_checkpoints
 
 # IPython
@@ -132,3 +132,6 @@ dmypy.json
 # Datasets
 datasets/
 ex1data1.csv
+
+# Vscode settings
+/.vscode
