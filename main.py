@@ -3,7 +3,9 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from cellData import cellDataOCV
+from cellData import cellData
+from cellExtractOCV import cellExtractOCV
+from cellSim import cellSim
 from plotData import plotData
 
 
@@ -17,28 +19,29 @@ def main():
     filename = temp + "551_Mixed1.csv"
     # filename = temp + "549_C20DisCh.csv"
 
-    """define class objects"""
-    cell = cellDataOCV(filename, pathname)
-    plot = plotData()
-
     """extract from dataset"""
-    cell.extractData()
+    cellDataObj = cellData(filename, pathname)
+    plotDataObj = plotData()
 
-    # plot.plotDataFromDataset(cell)
+    cellDataObj.extractData()
+
+    plotDataObj.plotDataFromDataset(cellDataObj)
 
     """extract and save OCV functions"""
-    # cell.extractOCV()
-    # cell.computeOCV()
-    # cell.saveOCV()
+    cellExtractOCVObj = cellExtractOCV(cellDataObj)
 
-    # plot.plotComputedOCV(cell)
+    # cellExtractOCVObj.OCV()
+
+    # plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
     """extract and save dynamic functions"""
-    cell.loadOCV()
-    cell.extractDynamic()
+    cellSimObj = cellSim(cellDataObj)
 
-    # plot.plotLoadedOCV(cell)
-    plot.plotDynVolt(cell)
+    cellSimObj.loadOCV()
+    cellSimObj.extractDynamic()
+
+    plotDataObj.plotLoadedOCV(cellSimObj)
+    plotDataObj.plotDynamic(cellSimObj)
     
     plt.show()
 
