@@ -28,7 +28,7 @@ def main():
     # plotDataObj.plotDataFromDataset(cellDataObj)
 
     """extract and save OCV functions"""
-    cellExtractOCVObj = cellExtractOCV(cellDataObj)
+    # cellExtractOCVObj = cellExtractOCV(cellDataObj)
 
     # cellExtractOCVObj.runOCV()
 
@@ -37,7 +37,7 @@ def main():
     """extract and save dynamic functions"""
     cellExtractParamsObj = cellExtractParams(cellDataObj)
 
-    cellExtractParamsObj.runSimLoad()
+    cellExtractParamsObj.runSimOpti()
 
     # plotDataObj.plotLoadedOCV(cellSimObj)
     plotDataObj.plotDynamic(cellExtractParamsObj)
