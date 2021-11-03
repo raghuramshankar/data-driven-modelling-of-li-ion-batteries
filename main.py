@@ -43,7 +43,7 @@ def main():
     cellSimObj.cellSim()
 
     # plotDataObj.plotLoadedOCV(cellSimObj)
-    # plotDataObj.plotDynamic(cellSimObj)
+    plotDataObj.plotDynamic(cellSimObj)
     
     plt.show()
 

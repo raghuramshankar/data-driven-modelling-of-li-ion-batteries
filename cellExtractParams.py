@@ -42,9 +42,16 @@ class cellExtractParams():
         print('extract dynamic done')
 
     def cellSim(self):
-        self.iR = np.zeros((self.nTime, self.nRC))
-        self.vC = np.zeros((self.nTime, self.nRC))
-        self.f = np.diag([np.exp(-self.dt/(self.r[j] * self.c[j])) for j in range(len(self.r))])
-        
+        self.iR = np.zeros((self.nRC, self.nTime))
+        self.vC = np.zeros((self.nRC, self.nTime))
+        self.vT = np.zeros(self.nTime)
+        self.f = [np.exp(-self.dt/(self.r[j] * self.c[j])) for j in range(len(self.r))]
+        self.aRC = np.diag(self.f)
+        self.bRC = np.ones(self.nRC) - self.f
+        self.vT[0] = self.testOCV[0]
+        for k in range(self.nTime - 1):
+            self.iR[:, k+1] = np.dot(self.aRC, self.iR[:, k]) + self.bRC * self.curr[k]
+            self.vC[:, k]   = self.iR[:, k] * self.r
+            self.vT[k+1] = self.testOCV[k] - np.sum(self.vC[:, k]) - self.curr[k] * self.r0
 
         print('cell sim done')
