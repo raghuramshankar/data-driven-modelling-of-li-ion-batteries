@@ -2,6 +2,9 @@ import os
 
 import numpy as np
 import pandas as pd
+from jax import jit, vmap
+
+from funcs import singleOpti
 
 
 class cellExtractParams():
@@ -27,25 +30,32 @@ class cellExtractParams():
 
         print("load OCV done")
 
-    def loadCellParams(self):
-        self.r0 = 1e-3
-        self.r = [1e-3, 3e-3]
-        self.c = [2e3, 5e3]
-        self.nRC = len(self.r)
-
     def extractDynamic(self):
         self.initSOC = self.SOCOCV[np.argmin(abs(self.voltOCV - self.volt[0]))]
         self.testSOC = self.initSOC - self.dt/(self.capacityOCV * 3600) * self.eta * np.cumsum(self.curr)
         self.testOCV = [self.voltOCV[np.argmin(abs(self.SOCOCV - soc))] for soc in self.testSOC]
         self.overPotVolt = self.volt - self.testOCV
         
-        print('extract dynamic done')
+        print("extract dynamic done")
+
+    def loadCellParams(self):
+        self.r0 = 1e-3
+        # self.r = [100e-3, 300e-3]
+        # self.c = [1e3, 1e3]
+        self.r = [0.0, 0.0]
+        self.c = [0.0, 0.0]
+        self.nRC = len(self.r)
+
+        print("load cell params done")
 
     def cellSim(self):
         self.iR = np.zeros((self.nRC, self.nTime))
         self.vC = np.zeros((self.nRC, self.nTime))
         self.vT = np.zeros(self.nTime)
-        self.f = [np.exp(-self.dt/(self.r[j] * self.c[j])) for j in range(len(self.r))]
+        if np.count_nonzero(self.r) != 0 and np.count_nonzero(self.c) != 0:
+            self.f = [np.exp(-self.dt/(self.r[j] * self.c[j])) for j in range(len(self.r))]
+        else:
+            self.f = np.zeros_like(self.r)
         self.aRC = np.diag(self.f)
         self.bRC = np.ones(self.nRC) - self.f
         self.vT[0] = self.testOCV[0]
@@ -54,9 +64,29 @@ class cellExtractParams():
             self.vC[:, k]   = self.iR[:, k] * self.r
             self.vT[k+1] = self.testOCV[k] - np.sum(self.vC[:, k]) - self.curr[k] * self.r0
 
-        print('cell sim done')
+        # print("cell sim done")
+
+        self.rmsError = self.computeRMS()
+        # print("RMS error =", self.rmsError, "mV")
+        return self.rmsError
 
     def computeRMS(self):
-        self.rmsError = 1000 * np.sqrt(np.mean(np.square(self.vT - self.volt)))
+        return 1000 * np.sqrt(np.mean(np.square(self.vT - self.volt)))
+
+    def cellParamsR0(self):
         
-        print('RMS error =', self.rmsError, "mV")
+        print("cell params r0 done")
+
+    def runSimLoad(self):
+        self.loadOCV()
+        self.loadCellParams()
+        self.extractDynamic()
+        self.cellSim()
+        self.computeRMS()
+
+    def runSimOpti(self):
+        self.loadOCV()
+        self.loadCellParams()
+        self.extractDynamic()
+        self.cellSim()
+        self.computeRMS()

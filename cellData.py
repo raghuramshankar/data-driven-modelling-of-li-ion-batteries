@@ -11,7 +11,7 @@ class cellData():
         self.fullname = self.pathname + self.filename
         
     def extractData(self):
-        self.df = pd.read_csv(self.fullname, skiprows=28)
+        self.df = pd.read_csv(self.fullname, skiprows=28, dtype=str)
         self.df = self.df.loc[:, ~self.df.columns.str.contains("^Unnamed")]
         self.df = self.df.drop(0)
         self.df = self.df.apply(pd.to_numeric, errors="ignore")

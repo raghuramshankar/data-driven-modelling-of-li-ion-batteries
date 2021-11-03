@@ -96,6 +96,6 @@ class plotData():
         fig4_f3.plot(cellExtractOCVObj.time, cellExtractOCVObj.volt, "g--", label="True Voltage")
         fig4_f3.set_xlabel("Time [sec]")
         fig4_f3.set_ylabel("Voltage [V]")
-        fig4_f3.set_title("Simulated Voltage and \n Terminal Voltage from" + cellExtractOCVObj.filename)
+        fig4_f3.set_title("Simulated Voltage and \n Terminal Voltage from " + cellExtractOCVObj.filename)
         fig4_f3.legend()
         fig4_f3.grid(True)
