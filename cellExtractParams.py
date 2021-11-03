@@ -55,3 +55,8 @@ class cellExtractParams():
             self.vT[k+1] = self.testOCV[k] - np.sum(self.vC[:, k]) - self.curr[k] * self.r0
 
         print('cell sim done')
+
+    def computeRMS(self):
+        self.rmsError = 1000 * np.sqrt(np.mean(np.square(self.vT - self.volt)))
+        
+        print('RMS error =', self.rmsError, "mV")

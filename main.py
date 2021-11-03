@@ -41,6 +41,7 @@ def main():
     cellSimObj.loadCellParams()
     cellSimObj.extractDynamic()
     cellSimObj.cellSim()
+    cellSimObj.computeRMS()
 
     # plotDataObj.plotLoadedOCV(cellSimObj)
     plotDataObj.plotDynamic(cellSimObj)
