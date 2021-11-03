@@ -1,8 +1,10 @@
 import os
 
-import numpy as np
+import jax
+import jax.numpy as np
+# import numpy as np
 import pandas as pd
-from jax import jit, vmap
+from jax import grad, jit, vmap
 
 from funcs import singleGradDescent
 
@@ -16,6 +18,8 @@ class cellExtractParams():
         self.dt = cellDataObj.dt
         self.eta = cellDataObj.eta
         self.nTime = len(cellDataObj.time)
+        # self.nTime = 5
+        self.volt = self.volt[0:self.nTime]
         self.nRC = 2
 
     def loadOCV(self):
@@ -31,6 +35,7 @@ class cellExtractParams():
 
         print("load OCV done")
 
+    # @jit
     def extractDynamic(self):
         self.initSOC = self.SOCOCV[np.argmin(abs(self.voltOCV - self.volt[0]))]
         self.testSOC = self.initSOC - self.dt/(self.capacityOCV * 3600) * self.eta * np.cumsum(self.curr)
@@ -74,14 +79,19 @@ class cellExtractParams():
             self.iR = np.zeros((self.nRC, self.nTime))
             self.vC = np.zeros((self.nRC, self.nTime))
             self.vT = np.zeros(self.nTime)
+            self.rmsError = 0
             self.vT[0] = self.testOCV[0]
-            self.f = [np.exp(-self.dt/(self.r[j] * self.c[j])) for j in range(len(self.r))]
+            self.f = [np.exp(-self.dt/np.dot(self.r[j], self.c[j])) for j in range(len(self.r))]
+            # self.f = np.zeros((self.nRC, 1))
+            # for j in range(self.nRC):
+                # self.f[j] = self.r[j] * self.c[j]
             self.aRC = np.diag(self.f)
             self.bRC = np.ones(self.nRC) - self.f
             for k in range(self.nTime - 1):
                 self.iR[:, k+1] = np.dot(self.aRC, self.iR[:, k]) + self.bRC * self.curr[k]
                 self.vC[:, k]   = self.iR[:, k] * self.r
                 self.vT[k+1] = self.testOCV[k] - np.sum(self.vC[:, k]) - self.curr[k] * self.r0
+            self.rmsError = np.sqrt(self.rmsError/self.nTime)
         print("cell sim done")
 
         self.rmsError = self.computeRMS()
@@ -89,23 +99,45 @@ class cellExtractParams():
 
         return self.rmsError
 
-    def cellSimOpti(self):
-        # self.r0 = 1e-3
-        self.r = [0.0, 0.0] 
-        self.c = [0.0, 0.0]
-        self.r0 = singleGradDescent(self)
-        print("optimized r0 = ", self.r0)
-        return self.cellSim()
+    def cellSimR0(self, r0):
+        self.r0 = r0
+        self.vT = 0
+        self.rmsError = 0
+        # self.vT[0] = self.testOCV[0]
+        for k in range(self.nTime - 1):
+            self.vT = self.testOCV[k] - self.curr[k] * self.r0
+            self.rmsError = self.rmsError + 1000 * np.square(self.vT - self.volt[k])
+        self.rmsError = np.sqrt(self.rmsError/self.nTime)
+        return self.rmsError
+        # print("cell sim done")
+
+    def gradientDescentOpti(self):
+        lossGrad = grad(self.cellSimR0)
+        optiR0 = 1e-3
+        for _ in range(100):
+            optiR0 -= lossGrad(optiR0) * 0.01
+        self.r0 = optiR0
+        print("final r0 = ", optiR0)
+        print("loss done")
+
+    # def cellSimOpti(self):
+    #     # self.r0 = 1e-3
+    #     self.r = [0.0, 0.0]
+    #     self.c = [0.0, 0.0]
+    #     self.r0 = singleGradDescent(self)
+    #     print("optimized r0 = ", self.r0)
+    #     self.cellSim(self.r0, [0], [0])
 
     def runSimLoad(self):
         self.loadOCV()
-        self.loadCellParams()
         self.extractDynamic()
-        self.cellSim()
+        self.cellSim(1e-3, [50e-3], [1e3])
         self.computeRMS()
 
     def runSimOpti(self):
         self.loadOCV()
         self.extractDynamic()
-        self.cellSimOpti()
+        # self.cellSimOpti()
+        self.gradientDescentOpti()
+        self.cellSim(self.r0, [0, 0], [0, 0])
         self.computeRMS()
