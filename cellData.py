@@ -1,21 +1,23 @@
 import numpy as np
 import pandas as pd
 
-from funcs import convertToSec
-
 
 class cellData():
     def __init__(self, filename, pathname):
         self.pathname = pathname
         self.filename = filename
         self.fullname = self.pathname + self.filename
+
+    def convertToSec(self, progTime):
+        [h, m, s] = map(float, progTime.split(":"))
+        return h * 3600 + m * 60 + s
         
     def extractData(self):
         self.df = pd.read_csv(self.fullname, skiprows=28, dtype=str)
         self.df = self.df.loc[:, ~self.df.columns.str.contains("^Unnamed")]
         self.df = self.df.drop(0)
         self.df = self.df.apply(pd.to_numeric, errors="ignore")
-        self.progTime = [convertToSec(progTime) for progTime in self.df["Prog Time"]]
+        self.progTime = [self.convertToSec(progTime) for progTime in self.df["Prog Time"]]
         self.time = [progTime - self.progTime[0] for progTime in self.progTime]
         self.df["Time"] = [time for time in self.time]
 

@@ -5,7 +5,7 @@ import pandas as pd
 
 from cellData import cellData
 from cellExtractOCV import cellExtractOCV
-from cellExtractParams import cellExtractParams
+from cellExtractParams import cellSim
 from plotData import plotData
 
 
@@ -16,8 +16,7 @@ def main():
     filenames = [filename for filename in os.listdir(pathname + temp) if filename.endswith(".csv")]
     d = pd.DataFrame(filenames)
     d.to_csv("filenames.csv", header=None, index=False)
-    filename = temp + "551_Mixed1.csv"
-    # filename = temp + "549_C20DisCh.csv"
+    filename = temp + "549_C20DisCh.csv"
 
     """extract from dataset"""
     cellDataObj = cellData(filename, pathname)
@@ -25,23 +24,27 @@ def main():
 
     cellDataObj.extractData()
 
-    # plotDataObj.plotDataFromDataset(cellDataObj)
+    plotDataObj.plotDataFromDataset(cellDataObj)
 
     """extract and save OCV functions"""
-    # cellExtractOCVObj = cellExtractOCV(cellDataObj)
+    cellExtractOCVObj = cellExtractOCV(cellDataObj)
 
-    # cellExtractOCVObj.runOCV()
+    cellExtractOCVObj.runOCV()
 
-    # plotDataObj.plotComputedOCV(cellExtractOCVObj)h
+    plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
     """extract and save dynamic functions"""
-    cellExtractParamsObj = cellExtractParams(cellDataObj)
+    filename = temp + "551_Mixed1.csv"
+    cellDataObj = cellData(filename, pathname)
 
-    cellExtractParamsObj.runSimOpti()
-    # cellExtractParamsObj.runSimLoad()
+    cellDataObj.extractData()
 
-    # plotDataObj.plotLoadedOCV(cellSimObj)
-    plotDataObj.plotDynamic(cellExtractParamsObj)
+    cellSimObj = cellSim(cellDataObj)
+
+    cellSimObj.runSimLoad()
+
+    plotDataObj.plotLoadedOCV(cellSimObj)
+    plotDataObj.plotDynamic(cellSimObj)
     
     plt.show()
 

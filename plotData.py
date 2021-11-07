@@ -1,7 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
 
-# matplotlib.use("Qt5Agg")
 matplotlib.rcParams['figure.dpi'] = 150
 
 class plotData():
@@ -73,29 +72,29 @@ class plotData():
         fig3_f1.legend()
         fig3_f1.grid(True)
 
-    def plotDynamic(self, cellExtractOCVObj):
+    def plotDynamic(self, cellSimObj):
         fig4 = plt.figure(figsize=(self.l, self.h))
-        # fig4_f1 = fig4.add_subplot(131)
-        # fig4_f1.plot(cellExtractOCVObj.time, cellExtractOCVObj.testOCV, "b", label="Test OCV")
-        # fig4_f1.set_xlabel("Time [sec]")
-        # fig4_f1.set_ylabel("Voltage [V]")
-        # fig4_f1.set_title("Test OCV from \n" + cellExtractOCVObj.filename)
-        # fig4_f1.legend()
-        # fig4_f1.grid(True)
+        fig4_f1 = fig4.add_subplot(131)
+        fig4_f1.plot(cellSimObj.time, cellSimObj.testOCV, "b", label="Test OCV")
+        fig4_f1.set_xlabel("Time [sec]")
+        fig4_f1.set_ylabel("Voltage [V]")
+        fig4_f1.set_title("Test OCV from \n" + cellSimObj.filename)
+        fig4_f1.legend()
+        fig4_f1.grid(True)
 
-        # fig4_f2 = fig4.add_subplot(132)
-        # fig4_f2.plot(cellExtractOCVObj.time, cellExtractOCVObj.overPotVolt, "b", label="Overpotential")
-        # fig4_f2.set_xlabel("Time [sec]")
-        # fig4_f2.set_ylabel("Voltage [V]")
-        # fig4_f2.set_title("Overpotential from \n" + cellExtractOCVObj.filename)
-        # fig4_f2.legend()
-        # fig4_f2.grid(True)
+        fig4_f2 = fig4.add_subplot(132)
+        fig4_f2.plot(cellSimObj.time, cellSimObj.overPotVolt, "b", label="Overpotential")
+        fig4_f2.set_xlabel("Time [sec]")
+        fig4_f2.set_ylabel("Voltage [V]")
+        fig4_f2.set_title("Overpotential from \n" + cellSimObj.filename)
+        fig4_f2.legend()
+        fig4_f2.grid(True)
 
-        fig4_f3 = fig4.add_subplot(111)
-        fig4_f3.plot(cellExtractOCVObj.time, cellExtractOCVObj.vT, "b", label="Simulated Voltage")
-        fig4_f3.plot(cellExtractOCVObj.time, cellExtractOCVObj.volt, "g--", label="True Voltage")
+        fig4_f3 = fig4.add_subplot(133)
+        fig4_f3.plot(cellSimObj.time, cellSimObj.vT, "b", label="Simulated Voltage")
+        fig4_f3.plot(cellSimObj.time, cellSimObj.volt, "g--", label="True Voltage")
         fig4_f3.set_xlabel("Time [sec]")
         fig4_f3.set_ylabel("Voltage [V]")
-        fig4_f3.set_title("Simulated Voltage and \n Terminal Voltage from " + cellExtractOCVObj.filename)
+        fig4_f3.set_title("Simulated Voltage and \n Terminal Voltage from " + cellSimObj.filename)
         fig4_f3.legend()
         fig4_f3.grid(True)
