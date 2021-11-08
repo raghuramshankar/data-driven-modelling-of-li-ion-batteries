@@ -1,9 +1,10 @@
 import matplotlib
 import matplotlib.pyplot as plt
 
-matplotlib.rcParams['figure.dpi'] = 150
+matplotlib.rcParams["figure.dpi"] = 150
 
-class plotData():
+
+class plotData:
     def __init__(self):
         self.l = 15.0
         self.h = 5.0
@@ -29,7 +30,12 @@ class plotData():
     def plotComputedOCV(self, cellExtractOCVObj):
         fig2 = plt.figure(figsize=(self.l, self.h))
         fig2_f1 = fig2.add_subplot(141)
-        fig2_f1.plot(cellExtractOCVObj.disTime, cellExtractOCVObj.disOCV, "r", label="Discharge OCV")
+        fig2_f1.plot(
+            cellExtractOCVObj.disTime,
+            cellExtractOCVObj.disOCV,
+            "r",
+            label="Discharge OCV",
+        )
         fig2_f1.set_xlabel("Time [s]")
         fig2_f1.set_ylabel("Voltage [V]")
         fig2_f1.set_title("Discharge OCV from \n" + cellExtractOCVObj.filename)
@@ -37,7 +43,9 @@ class plotData():
         fig2_f1.grid(True)
 
         fig2_f2 = fig2.add_subplot(142)
-        fig2_f2.plot(cellExtractOCVObj.chgTime, cellExtractOCVObj.chgOCV, "g", label="Charge OCV")
+        fig2_f2.plot(
+            cellExtractOCVObj.chgTime, cellExtractOCVObj.chgOCV, "g", label="Charge OCV"
+        )
         fig2_f2.set_xlabel("Time [s]")
         fig2_f2.set_ylabel("Voltage [V]")
         fig2_f2.set_title("Charge OCV from \n" + cellExtractOCVObj.filename)
@@ -45,9 +53,21 @@ class plotData():
         fig2_f2.grid(True)
 
         fig2_f3 = fig2.add_subplot(143)
-        fig2_f3.plot(cellExtractOCVObj.disTime, cellExtractOCVObj.disOCV, "r--", label="Discharge OCV")
-        fig2_f3.plot(cellExtractOCVObj.chgTime, cellExtractOCVObj.chgOCV, "g--", label="Charge OCV")
-        fig2_f3.plot(cellExtractOCVObj.disTime, cellExtractOCVObj.OCV, "b", label="Average OCV")
+        fig2_f3.plot(
+            cellExtractOCVObj.disTime,
+            cellExtractOCVObj.disOCV,
+            "r--",
+            label="Discharge OCV",
+        )
+        fig2_f3.plot(
+            cellExtractOCVObj.chgTime,
+            cellExtractOCVObj.chgOCV,
+            "g--",
+            label="Charge OCV",
+        )
+        fig2_f3.plot(
+            cellExtractOCVObj.disTime, cellExtractOCVObj.OCV, "b", label="Average OCV"
+        )
         fig2_f3.set_xlabel("Time [s]")
         fig2_f3.set_ylabel("Voltage [V]")
         fig2_f3.set_title("Average OCV from \n" + cellExtractOCVObj.filename)
@@ -55,13 +75,15 @@ class plotData():
         fig2_f3.grid(True)
 
         fig2_f4 = fig2.add_subplot(144)
-        fig2_f4.plot(cellExtractOCVObj.SOC, cellExtractOCVObj.OCV, "b", label="Average OCV")
+        fig2_f4.plot(
+            cellExtractOCVObj.SOC, cellExtractOCVObj.OCV, "b", label="Average OCV"
+        )
         fig2_f4.set_xlabel("SOC [%]")
         fig2_f4.set_ylabel("Voltage [V]")
         fig2_f4.set_title("Average OCV from \n" + cellExtractOCVObj.filename)
         fig2_f4.legend()
         fig2_f4.grid(True)
-    
+
     def plotLoadedOCV(self, cellSimObj):
         fig3 = plt.figure(figsize=(self.l, self.h))
         fig3_f1 = fig3.add_subplot(111)
@@ -83,7 +105,9 @@ class plotData():
         fig4_f1.grid(True)
 
         fig4_f2 = fig4.add_subplot(132)
-        fig4_f2.plot(cellSimObj.time, cellSimObj.overPotVolt, "b", label="Overpotential")
+        fig4_f2.plot(
+            cellSimObj.time, cellSimObj.overPotVolt, "b", label="Overpotential"
+        )
         fig4_f2.set_xlabel("Time [sec]")
         fig4_f2.set_ylabel("Voltage [V]")
         fig4_f2.set_title("Overpotential from \n" + cellSimObj.filename)
@@ -95,6 +119,8 @@ class plotData():
         fig4_f3.plot(cellSimObj.time, cellSimObj.volt, "g--", label="True Voltage")
         fig4_f3.set_xlabel("Time [sec]")
         fig4_f3.set_ylabel("Voltage [V]")
-        fig4_f3.set_title("Simulated Voltage and \n Terminal Voltage from " + cellSimObj.filename)
+        fig4_f3.set_title(
+            "Simulated Voltage and \n Terminal Voltage from " + cellSimObj.filename
+        )
         fig4_f3.legend()
         fig4_f3.grid(True)
