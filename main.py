@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from plotData import plotData
+from src.plotData import plotData
 from src.cellData import cellData
 from src.cellExtractOCV import cellExtractOCV
 from src.cellSim import cellSim

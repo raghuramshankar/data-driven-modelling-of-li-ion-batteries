@@ -130,8 +130,7 @@ dmypy.json
 .pyre/
 
 # Datasets
-datasets/
-ex1data1.csv
+# datasets/
 
 # Vscode settings
 /.vscode
