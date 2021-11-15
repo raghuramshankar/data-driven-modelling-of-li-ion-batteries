@@ -3,10 +3,10 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from src.plotData import plotData
 from src.cellData import cellData
 from src.cellExtractOCV import cellExtractOCV
 from src.cellSim import cellSim
+from src.plotData import plotData
 
 
 def main():
@@ -30,17 +30,18 @@ def main():
 
     cellDataObj.extractData()
 
-    plotDataObj.plotDataFromDataset(cellDataObj)
+    # plotDataObj.plotDataFromDataset(cellDataObj)
 
     """extract and save OCV functions"""
     cellExtractOCVObj = cellExtractOCV(cellDataObj)
 
     cellExtractOCVObj.runOCV()
 
-    plotDataObj.plotComputedOCV(cellExtractOCVObj)
+    # plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
     """extract and save dynamic functions"""
-    filename = temp + "551_Mixed1.csv"
+    # filename = temp + "551_Mixed1.csv"
+    filename = temp + "552_Mixed3.csv"
     cellDataObj = cellData(filename, pathname)
 
     cellDataObj.extractData()
@@ -49,7 +50,7 @@ def main():
 
     cellSimObj.runSimLoad()
 
-    plotDataObj.plotLoadedOCV(cellSimObj)
+    # plotDataObj.plotLoadedOCV(cellSimObj)
     plotDataObj.plotDynamic(cellSimObj)
 
     plt.show()

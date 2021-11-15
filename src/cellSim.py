@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 import pandas as pd
+from scipy.optimize import minimize
 
 
 class cellSim:
@@ -12,7 +13,9 @@ class cellSim:
         self.curr = cellDataObj.curr
         self.dt = cellDataObj.dt
         self.eta = cellDataObj.eta
+        self.nRC = 2
         self.nTime = len(cellDataObj.time)
+        # self.nTime = 100
         self.volt = self.volt[0 : self.nTime]
 
     def loadOCV(self):
@@ -42,31 +45,30 @@ class cellSim:
 
         print("extract dynamic done")
 
-    def loadCellParams(self):
+    def loadCellParamsDefault(self):
         self.r0 = 1e-3
-        self.r = [50e-3]
-        self.c = [1e3]
-        # self.r = [0.0, 0.0]
-        # self.c = [0.0, 0.0]
-        self.nRC = len(self.r)
+        self.r1 = 50e-3
+        self.c1 = 1e3
+        self.r2 = 50e-3
+        self.c2 = 1e3
 
         print("load cell params done")
 
     def computeRMS(self):
         self.rmsError = 1000 * np.sqrt(np.mean(np.square(self.vT - self.volt)))
 
-        print("RMS error = ", self.rmsError)
+        # print("RMS error = ", self.rmsError)
 
         return self.rmsError
 
     def cellSim(self):
-        self.nRC = np.shape(self.r)[0]
         self.iR = np.zeros((self.nRC, self.nTime))
         self.vC = np.zeros((self.nRC, self.nTime))
         self.vT = np.zeros(self.nTime)
         self.vT[0] = self.testOCV[0]
         self.f = [
-            np.exp(-self.dt / np.dot(self.r[j], self.c[j])) for j in range(len(self.r))
+            np.exp(-self.dt / np.dot(self.r1, self.c1)),
+            np.exp(-self.dt / np.dot(self.r2, self.c2))
         ]
         self.aRC = np.diag(self.f)
         self.bRC = np.ones(self.nRC) - self.f
@@ -74,16 +76,56 @@ class cellSim:
             self.iR[:, k + 1] = (
                 np.dot(self.aRC, self.iR[:, k]) + self.bRC * self.curr[k]
             )
-            self.vC[:, k] = self.iR[:, k] * self.r
+            self.vC[0, k] = self.iR[0, k] * self.r1
+            self.vC[1, k] = self.iR[1, k] * self.r2
             self.vT[k + 1] = (
                 self.testOCV[k] - np.sum(self.vC[:, k]) - self.curr[k] * self.r0
             )
 
-        print("cell sim done")
+        # print("cell sim done")
+
+    def objFn(self, x0):
+        self.r0 = x0[0]
+        self.r1 = x0[1]
+        self.r2 = x0[2]
+        self.c1 = x0[3] * 1e6
+        self.c2 = x0[4] * 1e6
+        self.cellSim()
+        rmsError = self.computeRMS()
+        return rmsError
+    
+    def constraintR0(self, x):
+        return x[0]
+    
+    def constraintRC1(self, x):
+        return 100 - x[1] * x[3]
+
+    def constraintRC2(self, x):
+        return 200 - x[2] * x[4]
+
+    def optFn(self):
+        print("Starting paramter extraction via optimization")
+        x0 = [10e-3, 50e-3, 100e-3, 100e3/1e6, 200e3/1e6]
+        bndsR = (0.0, 1000e-3)
+        bndsC = (1e3/1e6, 1e6/1e6)
+        bnds = (bndsR, bndsR, bndsR, bndsC, bndsC)
+        constraint1 = {"type": "ineq", "fun": self.constraintR0}
+        constraint2 = {"type": "ineq", "fun": self.constraintRC1}
+        constraint3 = {"type": "ineq", "fun": self.constraintRC2}
+        cons = [constraint1, constraint2, constraint3]
+        # minimize(self.objFn, x0, method="SLSQP", bounds=bnds, constraints=cons)
+        minimize(self.objFn, x0, method="SLSQP", bounds=bnds)
+        print("R0 = ", self.r0)
+        print("R1 = ", self.r1)
+        print("R2 = ", self.r2)
+        print("C1 = ", self.c1)
+        print("C2 = ", self.c2)
+        print("RMS error = ", self.computeRMS())
+        
 
     def runSimLoad(self):
         self.loadOCV()
         self.extractDynamic()
-        self.loadCellParams()
+        self.optFn()
+        # self.loadCellParamsDefault()
         self.cellSim()
-        self.computeRMS()
