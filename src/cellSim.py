@@ -88,8 +88,8 @@ class cellSim:
         self.r0 = x0[0]
         self.r1 = x0[1]
         self.r2 = x0[2]
-        self.c1 = x0[3] * 1e6
-        self.c2 = x0[4] * 1e6
+        self.c1 = x0[3] * self.scaleFactorC
+        self.c2 = x0[4] * self.scaleFactorC
         self.cellSim()
         rmsError = self.computeRMS()
         return rmsError
@@ -98,17 +98,20 @@ class cellSim:
         return x[0]
     
     def constraintRC1(self, x):
-        return 100 - x[1] * x[3]
+        return 1 - x[1] * x[3]
 
     def constraintRC2(self, x):
-        return 200 - x[2] * x[4]
+        return 10 - x[2] * x[4]
 
     def optFn(self):
-        print("Starting paramter extraction via optimization")
-        x0 = [10e-3, 50e-3, 100e-3, 100e3/1e6, 200e3/1e6]
-        bndsR = (0.0, 1000e-3)
-        bndsC = (1e3/1e6, 1e6/1e6)
-        bnds = (bndsR, bndsR, bndsR, bndsC, bndsC)
+        print("started parameter extraction via optimization")
+        self.scaleFactorC = 1e3
+        x0 = [10e-3, 50e-3, 100e-3, 100e3/self.scaleFactorC, 200e3/self.scaleFactorC]
+        bndsR0 = (1e-3, 50e-3)
+        bndsR = (10e-3, 500e-3)
+        bndsC1 = (1000/self.scaleFactorC, 20000/self.scaleFactorC)
+        bndsC2 = (10000/self.scaleFactorC, 100000/self.scaleFactorC)
+        bnds = (bndsR, bndsR, bndsR, bndsC1, bndsC2)
         constraint1 = {"type": "ineq", "fun": self.constraintR0}
         constraint2 = {"type": "ineq", "fun": self.constraintRC1}
         constraint3 = {"type": "ineq", "fun": self.constraintRC2}
