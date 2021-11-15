@@ -48,7 +48,8 @@ def main():
 
     cellSimObj = cellSim(cellDataObj)
 
-    cellSimObj.runSimLoad()
+    # cellSimObj.runSimLoad()
+    cellSimObj.runSimOpti()
 
     # plotDataObj.plotLoadedOCV(cellSimObj)
     plotDataObj.plotDynamic(cellSimObj)

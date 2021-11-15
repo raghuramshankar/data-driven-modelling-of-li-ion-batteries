@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
+from numba import jit
 
 
 class cellSim:
@@ -61,6 +62,7 @@ class cellSim:
 
         return self.rmsError
 
+    @jit
     def cellSim(self):
         self.iR = np.zeros((self.nRC, self.nTime))
         self.vC = np.zeros((self.nRC, self.nTime))
@@ -108,7 +110,7 @@ class cellSim:
         self.scaleFactorC = 1e3
         x0 = [10e-3, 50e-3, 100e-3, 100e3/self.scaleFactorC, 200e3/self.scaleFactorC]
         bndsR0 = (1e-3, 50e-3)
-        bndsR = (10e-3, 500e-3)
+        bndsR = (10e-3, 1000e-3)
         bndsC1 = (1000/self.scaleFactorC, 20000/self.scaleFactorC)
         bndsC2 = (10000/self.scaleFactorC, 100000/self.scaleFactorC)
         bnds = (bndsR, bndsR, bndsR, bndsC1, bndsC2)
@@ -129,6 +131,11 @@ class cellSim:
     def runSimLoad(self):
         self.loadOCV()
         self.extractDynamic()
+        self.loadCellParamsDefault()
+        self.cellSim()
+
+    def runSimOpti(self):
+        self.loadOCV()
+        self.extractDynamic()
         self.optFn()
-        # self.loadCellParamsDefault()
         self.cellSim()
