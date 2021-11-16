@@ -39,8 +39,8 @@ This project is an implementation of RC link modelling of Li-ion Batteries using
 ### RC2 model:
 OCV-SOC curve extracted from ```25degC/549_C20DisCh.csv```, training done on ```25degC/551_Mixed1.csv``` and validation done on ```25degC/551_LA92.csv```:
 
-| Parameter | R0($\Omega$)    | R1($\Omega$)    | R2($\Omega$) | C1(F)     | C2(F)      | CRMSE(V)             |
-|-----------|------------|------------|---------|---------------|----------------|-------------------|
-| Value     | 0.01951358 | 0.01541913 | 0.5     | 1395.97247796 | 84959.64540431 | 20.095525362647045 |
+| Parameter | R0(ohm)    | R1(ohm)    | R2(ohm) | C1(farad)     | C2(farad)      | Training CRMSE(mV)   | Validation CRMSE(mV)   |
+|-----------|------------|------------|---------|---------------|----------------|-------------------|--------------------|
+| Value     | 0.01951358 | 0.01541913 | 0.5     | 1395.97247796 | 84959.64540431 | 20.01416826514894 | 20.095525362647045 |
 
 ### RC2 model with hysteresis: TBD
