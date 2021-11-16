@@ -30,14 +30,14 @@ def main():
 
     cellDataObj.extractData()
 
-    # plotDataObj.plotDataFromDataset(cellDataObj)
+    plotDataObj.plotDataFromDataset(cellDataObj)
 
     """extract and save OCV functions"""
     cellExtractOCVObj = cellExtractOCV(cellDataObj)
 
     cellExtractOCVObj.runOCV()
 
-    plotDataObj.plotComputedOCV(cellExtractOCVObj)
+    # plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
     """extract and save dynamic functions"""
     filename = temp + "551_Mixed1.csv"

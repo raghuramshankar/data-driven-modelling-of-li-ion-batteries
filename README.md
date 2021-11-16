@@ -23,12 +23,15 @@ This project is an implementation of RC link modelling of Li-ion Batteries using
 
 ## OCV-SOC Curve Extraction
 - The OCV-SOC curve is computed as the averge of the charge and discharge OCV-SOC curves extracted from OCV test data.
-- The computed OCV-SOC curve is the stored for simulation of cell using known cell parameters.
+- ![ocv-test](images/test-volt.png)
 - ![ocv](images/ocv.png)
+- The computed OCV-SOC curve is the stored for simulation of cell using known cell parameters.
+- ![loaded-ocv](images/loaded-ocv.png)
 
 ## Model Parameter Extraction
 - The cell parameters are extracted from the dynamic test data using the ```minimize``` function from ```scipy.optimize```. 
-- The Cumulative Root Mean Squared Error (CRMSE) between the simulated voltage and actual voltage is considered as the loss function to be minimized.
+- The Cumulative Root Mean Squared Error (CRMSE) between the simulated terminal voltage and actual terminal voltage for a given dynamic test is considered as the loss function to be minimized.
 - The bounds of the cell parameters are defined with plausible values for the resistances and time constants of each RC branch.
 - Once the parameters are trained from a training data, it is then validated on different dynamic test data by comparing the computed CRMSEs.
+- ![overpot](images/overpot.png)
 - ![dynamic](images/dynamic.png)

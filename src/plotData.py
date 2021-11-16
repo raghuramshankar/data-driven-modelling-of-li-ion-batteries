@@ -10,21 +10,13 @@ class plotData():
 
     def plotDataFromDataset(self, cellDataObj):
         fig1 = plt.figure(figsize=(self.l, self.h))
-        fig1_f1 = fig1.add_subplot(121)
+        fig1_f1 = fig1.add_subplot(111)
         fig1_f1.plot(cellDataObj.time, cellDataObj.volt, "b", label="Voltage")
         fig1_f1.set_xlabel("Time [s]")
         fig1_f1.set_ylabel("Voltage [V]")
         fig1_f1.set_title("Voltage from \n" + cellDataObj.filename)
         fig1_f1.legend(loc="lower right")
         fig1_f1.grid(True)
-
-        fig1_f2 = fig1.add_subplot(122)
-        fig1_f2.plot(cellDataObj.time, cellDataObj.curr, "b", label="Current")
-        fig1_f2.set_xlabel("Time [s]")
-        fig1_f2.set_ylabel("Current [A]")
-        fig1_f2.set_title("Current from \n" + cellDataObj.filename)
-        fig1_f2.legend(loc="lower right")
-        fig1_f2.grid(True)
 
     def plotComputedOCV(self, cellExtractOCVObj):
         fig2 = plt.figure(figsize=(self.l, self.h))
