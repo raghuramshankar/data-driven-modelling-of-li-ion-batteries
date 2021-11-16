@@ -39,6 +39,6 @@ This project is an implementation of RC link modelling of Li-ion Batteries using
 ## Results
 - OCV-SOC curve extracted from ```25degC/549_C20DisCh.csv``` and training done on ```CellParams--25degC--551_Mixed1.csv```
 
-| Parameter | R0(ohm)    | R1(ohm)    | R2(ohm) | C1(farad)     | C2(farad)      | CRMSE             |
+| Parameter | R0($\Omega$)    | R1($\Omega$)    | R2($\Omega$) | C1(F)     | C2(F)      | CRMSE(V)             |
 |-----------|------------|------------|---------|---------------|----------------|-------------------|
 | Value     | 0.01951358 | 0.01541913 | 0.5     | 1395.97247796 | 84959.64540431 | 20.01416826514894 |
