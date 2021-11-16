@@ -48,7 +48,7 @@ def main():
 
     cellSimObj = cellSim(cellDataObj)
 
-    cellSimObj.runSimLoad()
+    cellSimObj.runSimValidate()
     # cellSimObj.runSimTrain()
 
     # plotDataObj.plotLoadedOCV(cellSimObj)

@@ -15,7 +15,6 @@ class cellSim:
         self.eta = cellDataObj.eta
         self.nRC = 2
         self.nTime = len(cellDataObj.time)
-        # self.nTime = 100
         self.volt = self.volt[0 : self.nTime]
         self.sign = np.zeros_like(self.curr)
 
@@ -54,7 +53,7 @@ class cellSim:
     def loadCellParamsOpti(self):
         pathname = "results/"
         filenames = [
-            filename for filename in os.listdir(pathname) if filename.endswith(".csv")
+            filename for filename in os.listdir(pathname) if filename.startswith("CellParams")
         ]
         index = 0
         self.filenameCellParamsOpti = filenames[index]
@@ -65,7 +64,7 @@ class cellSim:
         self.c1 = self.dfCellParamsOpti["c1"].to_numpy()
         self.c2 = self.dfCellParamsOpti["c2"].to_numpy()
 
-        print("load CellParamsOpti done")
+        print("load CellParamsOpti done from " + self.filenameCellParamsOpti)
 
     def computeRMS(self):
         self.rmsError = 1000 * np.sqrt(np.mean(np.square(self.vT - self.volt)))
@@ -93,7 +92,12 @@ class cellSim:
                 self.testOCV[k] - np.sum(self.vC[:, k]) - self.curr[k] * self.r0
             )
 
-        # print("cell sim done")
+    def printCellParams(self):
+        print("R0 = ", self.r0, "ohm")
+        print("R1 = ", self.r1, "ohm")
+        print("R2 = ", self.r2, "ohm")
+        print("C1 = ", self.c1, "farad")
+        print("C2 = ", self.c2, "farad")
 
     def objFn(self, x0):
         self.r0 = x0[0]
@@ -119,7 +123,7 @@ class cellSim:
         self.scaleFactorC = 1e3
         x0 = [10e-3, 50e-3, 100e-3, 100e3/self.scaleFactorC, 200e3/self.scaleFactorC]
         bndsR0 = (1e-3, 50e-3)
-        bndsR = (10e-3, 1000e-3)
+        bndsR = (10e-3, 500e-3)
         bndsC1 = (1000/self.scaleFactorC, 20000/self.scaleFactorC)
         bndsC2 = (10000/self.scaleFactorC, 100000/self.scaleFactorC)
         bnds = (bndsR0, bndsR, bndsR, bndsC1, bndsC2)
@@ -129,11 +133,6 @@ class cellSim:
         # cons = [constraint1, constraint2, constraint3]
         # minimize(self.objFn, x0, method="SLSQP", bounds=bnds, constraints=cons)
         minimize(self.objFn, x0, method="SLSQP", bounds=bnds)
-        print("R0 = ", self.r0)
-        print("R1 = ", self.r1)
-        print("R2 = ", self.r2)
-        print("C1 = ", self.c1)
-        print("C2 = ", self.c2)
 
     def saveCellParamsOpti(self):
         self.dfCellParams = {}
@@ -147,17 +146,21 @@ class cellSim:
             "results/CellParams--" + self.filename.replace("/", "--"), index=False
         )
         
-    def runSimLoad(self):
+    def runSimValidate(self):
+        print("starting validation of RC2 cell model")
         self.loadOCV()
         self.extractDynamic()
         self.loadCellParamsOpti()
+        self.printCellParams()
         self.cellSim()
         print("RMS error = ", self.computeRMS())
 
     def runSimTrain(self):
+        print("starting training of RC2 cell model")
         self.loadOCV()
         self.extractDynamic()
         self.optFn()
+        self.printCellParams()
         self.saveCellParamsOpti()
         self.cellSim()
         print("RMS error = ", self.computeRMS())

@@ -5,8 +5,8 @@ matplotlib.rcParams['figure.dpi'] = 100
 
 class plotData():
     def __init__(self):
-        self.l = 15.0
-        self.h = 5.0
+        self.l = 10.0
+        self.h = self.l*3/4
 
     def plotDataFromDataset(self, cellDataObj):
         fig1 = plt.figure(figsize=(self.l, self.h))
@@ -51,27 +51,12 @@ class plotData():
 
     def plotDynamic(self, cellSimObj):
         fig4 = plt.figure(figsize=(self.l, self.h))
-        # fig4_f1 = fig4.add_subplot(131)
-        # fig4_f1.plot(cellSimObj.time, cellSimObj.testOCV, "b", label="Test OCV")
-        # fig4_f1.set_xlabel("Time [sec]")
-        # fig4_f1.set_ylabel("Voltage [V]")
-        # fig4_f1.set_title("Test OCV from \n" + cellSimObj.filename)
-        # fig4_f1.legend()
-        # fig4_f1.grid(True)
 
-        # fig4_f2 = fig4.add_subplot(121)
-        # fig4_f2.plot(cellSimObj.time, cellSimObj.overPotVolt, "b", label="Overpotential")
-        # fig4_f2.set_xlabel("Time [sec]")
-        # fig4_f2.set_ylabel("Voltage [V]")
-        # fig4_f2.set_title("Overpotential from \n" + cellSimObj.filename)
-        # fig4_f2.legend()
-        # fig4_f2.grid(True)
-
-        fig4_f3 = fig4.add_subplot(111)
-        fig4_f3.plot(cellSimObj.time, cellSimObj.vT, "b", label="Simulated Voltage")
-        fig4_f3.plot(cellSimObj.time, cellSimObj.volt, "g--", label="True Voltage")
-        fig4_f3.set_xlabel("Time [sec]")
-        fig4_f3.set_ylabel("Voltage [V]")
-        fig4_f3.set_title("Simulated Voltage and \n Terminal Voltage from " + cellSimObj.filename)
-        fig4_f3.legend()
-        fig4_f3.grid(True)
+        fig4_f1 = fig4.add_subplot(111)
+        fig4_f1.plot(cellSimObj.time, cellSimObj.vT, "b", label="Simulated Voltage")
+        fig4_f1.plot(cellSimObj.time, cellSimObj.volt, "g--", label="True Voltage")
+        fig4_f1.set_xlabel("Time [sec]")
+        fig4_f1.set_ylabel("Voltage [V]")
+        fig4_f1.set_title("Simulated Voltage using " + cellSimObj.filenameCellParamsOpti + " \n and \n Terminal Voltage from " + cellSimObj.filename)
+        fig4_f1.legend()
+        fig4_f1.grid(True)
