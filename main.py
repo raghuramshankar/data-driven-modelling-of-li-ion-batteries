@@ -10,7 +10,7 @@ from src.plotData import plotData
 
 
 def main():
-    """define cell filename"""
+    """create list of tests available from dataset"""
     pathname = (
         "datasets/lg-18650hg2/LG_HG2_Original_Dataset_McMasterUniversity_Jan_2020/"
     )
@@ -24,35 +24,28 @@ def main():
     d.to_csv("filenames.csv", header=None, index=False)
     filename = temp + "549_C20DisCh.csv"
 
-    """extract from dataset"""
+    """extract ocv-soc curve"""
     cellDataObj = cellData(filename, pathname)
     plotDataObj = plotData()
 
     cellDataObj.extractData()
-
     # plotDataObj.plotDataFromDataset(cellDataObj)
 
-    """extract and save OCV functions"""
     cellExtractOCVObj = cellExtractOCV(cellDataObj)
-
     cellExtractOCVObj.runOCV()
-
     # plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
-    """extract and save dynamic functions"""
+    """train/validate model parameters"""
     # filename = temp + "551_Mixed1.csv"
     filename = temp + "551_LA92.csv"
     cellDataObj = cellData(filename, pathname)
 
     cellDataObj.extractData()
-
     # plotDataObj.plotDataFromDataset(cellDataObj)
 
     cellSimObj = cellSim(cellDataObj)
-
     # cellSimObj.runSimTrain()
     cellSimObj.runSimValidate()
-
     # plotDataObj.plotLoadedOCV(cellSimObj)
     plotDataObj.plotDynamic(cellSimObj)
 

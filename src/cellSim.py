@@ -124,8 +124,8 @@ class cellSim:
         x0 = [10e-3, 50e-3, 100e-3, 100e3/self.scaleFactorC, 200e3/self.scaleFactorC]
         bndsR0 = (1e-3, 50e-3)
         bndsR = (10e-3, 500e-3)
-        bndsC1 = (1000/self.scaleFactorC, 20000/self.scaleFactorC)
-        bndsC2 = (10000/self.scaleFactorC, 100000/self.scaleFactorC)
+        bndsC1 = (1e3/self.scaleFactorC, 20e3/self.scaleFactorC)
+        bndsC2 = (10e3/self.scaleFactorC, 100e3/self.scaleFactorC)
         bnds = (bndsR0, bndsR, bndsR, bndsC1, bndsC2)
         # constraint1 = {"type": "ineq", "fun": self.constraintR0}
         # constraint2 = {"type": "ineq", "fun": self.constraintRC1}
@@ -152,7 +152,7 @@ class cellSim:
         self.loadCellParamsOpti()
         self.printCellParams()
         self.cellSim()
-        print("CRMSE error = ", self.computeRMS())
+        print("CRMSE = ", self.computeRMS())
 
     def runSimTrain(self):
         print("starting training of RC2 cell model")
@@ -162,4 +162,4 @@ class cellSim:
         self.saveCellParamsOpti()
         self.printCellParams()
         self.cellSim()
-        print("CRMSE error = ", self.computeRMS())
+        print("CRMSE = ", self.computeRMS())
