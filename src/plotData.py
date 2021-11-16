@@ -47,7 +47,7 @@ class plotData():
         fig4_f1 = fig4.add_subplot(111)
         fig4_f1.plot(cellSimObj.time, cellSimObj.vT, "b", label="Simulated Voltage")
         fig4_f1.plot(cellSimObj.time, cellSimObj.volt, "g--", label="True Voltage")
-        fig4_f1.set_xlabel("Time [sec]")
+        fig4_f1.set_xlabel("Time [s]")
         fig4_f1.set_ylabel("Voltage [V]")
         fig4_f1.set_title("Simulated Voltage using " + cellSimObj.filenameCellParamsOpti + " \n and \n Terminal Voltage from " + cellSimObj.filename)
         fig4_f1.legend()

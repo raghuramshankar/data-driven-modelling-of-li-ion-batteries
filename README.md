@@ -8,6 +8,10 @@ Repository for project titled ```Data-driven modelling of Li-ion Batteries```.
 - Matplotlib
 - Pandas
 
+## Usage
+- [main.py](main.py) for execution in IDE
+- [main.ipynb](main.ipynb) for execution as a notebook
+
 ## Overview
 This project is an implementation of RC link modelling of Li-ion Batteries using convex optimization to fit desired parameters.
 
@@ -49,3 +53,6 @@ OCV-SOC curve extracted from ```25degC/549_C20DisCh.csv```, training done on ```
 | Value     | 0.01951358 | 0.01541913 | 0.5     | 1395.97247796 | 84959.64540431 | 20.01416826514894 | 20.095525362647045 |
 
 ### RC2 model with hysteresis: TBD
+
+## License
+[MIT License](LICENSE)
