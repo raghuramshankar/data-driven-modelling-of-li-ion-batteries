@@ -33,12 +33,11 @@ This project is an implementation of RC link modelling of Li-ion Batteries using
 - The Cumulative Root Mean Squared Error (CRMSE) between the simulated terminal voltage and actual terminal voltage for a given dynamic test is considered as the loss function to be minimized.
 - The bounds of the cell parameters are defined with plausible values for the resistances and time constants of each RC branch.
 - Once the parameters are trained from a training data, it is then validated on different dynamic test data by comparing the computed CRMSEs.
-- ![overpot](images/overpot.png)
 - ![dynamic](images/dynamic.png)
 
 ## Results
-- OCV-SOC curve extracted from ```25degC/549_C20DisCh.csv``` and training done on ```CellParams--25degC--551_Mixed1.csv```
+- OCV-SOC curve extracted from ```25degC/549_C20DisCh.csv```, training done on ```25degC/551_Mixed1.csv``` and validation done on ```25degC/551_LA92.csv```:
 
 | Parameter | R0($\Omega$)    | R1($\Omega$)    | R2($\Omega$) | C1(F)     | C2(F)      | CRMSE(V)             |
 |-----------|------------|------------|---------|---------------|----------------|-------------------|
-| Value     | 0.01951358 | 0.01541913 | 0.5     | 1395.97247796 | 84959.64540431 | 20.01416826514894 |
+| Value     | 0.01951358 | 0.01541913 | 0.5     | 1395.97247796 | 84959.64540431 | 20.095525362647045 |
