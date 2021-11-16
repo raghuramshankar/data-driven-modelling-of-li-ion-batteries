@@ -3,7 +3,6 @@ import os
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
-from numba import jit
 
 
 class cellSim:
@@ -18,11 +17,12 @@ class cellSim:
         self.nTime = len(cellDataObj.time)
         # self.nTime = 100
         self.volt = self.volt[0 : self.nTime]
+        self.sign = np.zeros_like(self.curr)
 
     def loadOCV(self):
         pathname = "results/"
         filenames = [
-            filename for filename in os.listdir(pathname) if filename.endswith(".csv")
+            filename for filename in os.listdir(pathname) if filename.startswith("OCV")
         ]
         index = 0
         self.filenameOCV = filenames[index]
@@ -43,26 +43,35 @@ class cellSim:
             self.voltOCV[np.argmin(abs(self.SOCOCV - soc))] for soc in self.testSOC
         ]
         self.overPotVolt = self.volt - self.testOCV
+        for i in range(self.nTime):
+            if np.abs(self.curr[i]) > 0:
+                self.sign[i] = np.sign(self.curr[i])
+            else:
+                self.sign[i] = self.sign[i-1]
 
         print("extract dynamic done")
 
-    def loadCellParamsDefault(self):
-        self.r0 = 1e-3
-        self.r1 = 50e-3
-        self.c1 = 1e3
-        self.r2 = 50e-3
-        self.c2 = 1e3
+    def loadCellParamsOpti(self):
+        pathname = "results/"
+        filenames = [
+            filename for filename in os.listdir(pathname) if filename.endswith(".csv")
+        ]
+        index = 0
+        self.filenameCellParamsOpti = filenames[index]
+        self.dfCellParamsOpti = pd.read_csv(pathname + self.filenameCellParamsOpti)
+        self.r0 = self.dfCellParamsOpti["r0"].to_numpy()
+        self.r1 = self.dfCellParamsOpti["r1"].to_numpy()
+        self.r2 = self.dfCellParamsOpti["r2"].to_numpy()
+        self.c1 = self.dfCellParamsOpti["c1"].to_numpy()
+        self.c2 = self.dfCellParamsOpti["c2"].to_numpy()
 
-        print("load cell params done")
+        print("load CellParamsOpti done")
 
     def computeRMS(self):
         self.rmsError = 1000 * np.sqrt(np.mean(np.square(self.vT - self.volt)))
 
-        # print("RMS error = ", self.rmsError)
-
         return self.rmsError
 
-    @jit
     def cellSim(self):
         self.iR = np.zeros((self.nRC, self.nTime))
         self.vC = np.zeros((self.nRC, self.nTime))
@@ -113,11 +122,11 @@ class cellSim:
         bndsR = (10e-3, 1000e-3)
         bndsC1 = (1000/self.scaleFactorC, 20000/self.scaleFactorC)
         bndsC2 = (10000/self.scaleFactorC, 100000/self.scaleFactorC)
-        bnds = (bndsR, bndsR, bndsR, bndsC1, bndsC2)
-        constraint1 = {"type": "ineq", "fun": self.constraintR0}
-        constraint2 = {"type": "ineq", "fun": self.constraintRC1}
-        constraint3 = {"type": "ineq", "fun": self.constraintRC2}
-        cons = [constraint1, constraint2, constraint3]
+        bnds = (bndsR0, bndsR, bndsR, bndsC1, bndsC2)
+        # constraint1 = {"type": "ineq", "fun": self.constraintR0}
+        # constraint2 = {"type": "ineq", "fun": self.constraintRC1}
+        # constraint3 = {"type": "ineq", "fun": self.constraintRC2}
+        # cons = [constraint1, constraint2, constraint3]
         # minimize(self.objFn, x0, method="SLSQP", bounds=bnds, constraints=cons)
         minimize(self.objFn, x0, method="SLSQP", bounds=bnds)
         print("R0 = ", self.r0)
@@ -125,17 +134,30 @@ class cellSim:
         print("R2 = ", self.r2)
         print("C1 = ", self.c1)
         print("C2 = ", self.c2)
-        print("RMS error = ", self.computeRMS())
-        
 
+    def saveCellParamsOpti(self):
+        self.dfCellParams = {}
+        self.dfCellParams.update({"r0": self.r0})
+        self.dfCellParams.update({"r1": self.r1})
+        self.dfCellParams.update({"r2": self.r2})
+        self.dfCellParams.update({"c1": self.c1})
+        self.dfCellParams.update({"c2": self.c2})
+        self.dfCellParams = pd.DataFrame(self.dfCellParams, index=[0])
+        self.dfCellParams.to_csv(
+            "results/CellParams--" + self.filename.replace("/", "--"), index=False
+        )
+        
     def runSimLoad(self):
         self.loadOCV()
         self.extractDynamic()
-        self.loadCellParamsDefault()
+        self.loadCellParamsOpti()
         self.cellSim()
+        print("RMS error = ", self.computeRMS())
 
-    def runSimOpti(self):
+    def runSimTrain(self):
         self.loadOCV()
         self.extractDynamic()
         self.optFn()
+        self.saveCellParamsOpti()
         self.cellSim()
+        print("RMS error = ", self.computeRMS())

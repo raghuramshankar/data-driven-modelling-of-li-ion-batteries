@@ -40,16 +40,16 @@ def main():
     # plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
     """extract and save dynamic functions"""
-    # filename = temp + "551_Mixed1.csv"
-    filename = temp + "552_Mixed3.csv"
+    filename = temp + "551_Mixed1.csv"
+    # filename = temp + "552_Mixed3.csv"
     cellDataObj = cellData(filename, pathname)
 
     cellDataObj.extractData()
 
     cellSimObj = cellSim(cellDataObj)
 
-    # cellSimObj.runSimLoad()
-    cellSimObj.runSimOpti()
+    cellSimObj.runSimLoad()
+    # cellSimObj.runSimTrain()
 
     # plotDataObj.plotLoadedOCV(cellSimObj)
     plotDataObj.plotDynamic(cellSimObj)
