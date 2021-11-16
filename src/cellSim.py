@@ -135,6 +135,7 @@ class cellSim:
         minimize(self.objFn, x0, method="SLSQP", bounds=bnds)
 
     def saveCellParamsOpti(self):
+        self.filenameCellParamsOpti = "results/CellParams--" + self.filename.replace("/", "--")
         self.dfCellParams = {}
         self.dfCellParams.update({"r0": self.r0})
         self.dfCellParams.update({"r1": self.r1})
@@ -142,9 +143,7 @@ class cellSim:
         self.dfCellParams.update({"c1": self.c1})
         self.dfCellParams.update({"c2": self.c2})
         self.dfCellParams = pd.DataFrame(self.dfCellParams, index=[0])
-        self.dfCellParams.to_csv(
-            "results/CellParams--" + self.filename.replace("/", "--"), index=False
-        )
+        self.dfCellParams.to_csv(self.filenameCellParamsOpti, index=False)
         
     def runSimValidate(self):
         print("starting validation of RC2 cell model")
@@ -160,7 +159,7 @@ class cellSim:
         self.loadOCV()
         self.extractDynamic()
         self.optFn()
-        self.printCellParams()
         self.saveCellParamsOpti()
+        self.printCellParams()
         self.cellSim()
         print("RMS error = ", self.computeRMS())
