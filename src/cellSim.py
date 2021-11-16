@@ -152,7 +152,7 @@ class cellSim:
         self.loadCellParamsOpti()
         self.printCellParams()
         self.cellSim()
-        print("RMS error = ", self.computeRMS())
+        print("CRMSE error = ", self.computeRMS())
 
     def runSimTrain(self):
         print("starting training of RC2 cell model")
@@ -162,4 +162,4 @@ class cellSim:
         self.saveCellParamsOpti()
         self.printCellParams()
         self.cellSim()
-        print("RMS error = ", self.computeRMS())
+        print("CRMSE error = ", self.computeRMS())

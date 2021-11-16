@@ -35,3 +35,10 @@ This project is an implementation of RC link modelling of Li-ion Batteries using
 - Once the parameters are trained from a training data, it is then validated on different dynamic test data by comparing the computed CRMSEs.
 - ![overpot](images/overpot.png)
 - ![dynamic](images/dynamic.png)
+
+## Results
+- OCV-SOC curve extracted from ```25degC/549_C20DisCh.csv``` and training done on ```CellParams--25degC--551_Mixed1.csv```
+
+| Parameter | R0(ohm)    | R1(ohm)    | R2(ohm) | C1(farad)     | C2(farad)      | CRMSE             |
+|-----------|------------|------------|---------|---------------|----------------|-------------------|
+| Value     | 0.01951358 | 0.01541913 | 0.5     | 1395.97247796 | 84959.64540431 | 20.01416826514894 |
