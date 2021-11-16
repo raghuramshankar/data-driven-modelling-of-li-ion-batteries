@@ -17,9 +17,9 @@ This project is an implementation of RC link modelling of Li-ion Batteries using
 
 ## Battery Models Used
 - RC2 model:
-    - ![rc2](images/rc2.png)
+    - ![rc2](images/rc2.jpg)
 - RC2 model with hysteresis:
-    - ![rc2-hyst](images/rc2-hyst.png)
+    - ![rc2-hyst](images/rc2-hyst.jpg)
 
 ## OCV-SOC Curve Extraction
 - The OCV-SOC curve is computed as the averge of the charge and discharge OCV-SOC curves extracted from OCV test data.
