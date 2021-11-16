@@ -40,8 +40,8 @@ def main():
     # plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
     """extract and save dynamic functions"""
-    # filename = temp + "551_Mixed1.csv"
-    filename = temp + "551_LA92.csv"
+    filename = temp + "551_Mixed1.csv"
+    # filename = temp + "551_LA92.csv"
     cellDataObj = cellData(filename, pathname)
 
     cellDataObj.extractData()
