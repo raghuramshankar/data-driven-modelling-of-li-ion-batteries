@@ -12,14 +12,14 @@ Repository for project titled ```Data-driven modelling of Li-ion Batteries```.
 This project is an implementation of RC link modelling of Li-ion Batteries using convex optimization to fit desired parameters.
 
 ## Open Source Datasets Used
-- [LG 18650HG2](https://data.mendeley.com/datasets/cp3473x7xv/3)
-    - Kollmeyer, Phillip; Vidal, Carlos; Naguib Mina; Skells, Michael  (2020), “LG 18650HG2 Li-ion Battery Data and Example Deep Neural Network xEV SOC Estimator Script”, Mendeley Data, V3, doi: 10.17632/cp3473x7xv.3
+### [LG 18650HG2](https://data.mendeley.com/datasets/cp3473x7xv/3)
+- Kollmeyer, Phillip; Vidal, Carlos; Naguib Mina; Skells, Michael  (2020), “LG 18650HG2 Li-ion Battery Data and Example Deep Neural Network xEV SOC Estimator Script”, Mendeley Data, V3, doi: 10.17632/cp3473x7xv.3
 
 ## Battery Models Used
-- RC2 model:
-    - ![rc2](images/rc2.jpg)
-- RC2 model with hysteresis:
-    - ![rc2-hyst](images/rc2-hyst.jpg)
+### RC2 model:
+- ![rc2](images/rc2.jpg)
+### RC2 model with hysteresis:
+- ![rc2-hyst](images/rc2-hyst.jpg)
 
 ## OCV-SOC Curve Extraction
 - The OCV-SOC curve is computed as the averge of the charge and discharge OCV-SOC curves extracted from OCV test data.
@@ -36,8 +36,11 @@ This project is an implementation of RC link modelling of Li-ion Batteries using
 - ![dynamic](images/dynamic.png)
 
 ## Results
-- OCV-SOC curve extracted from ```25degC/549_C20DisCh.csv```, training done on ```25degC/551_Mixed1.csv``` and validation done on ```25degC/551_LA92.csv```:
+### RC2 model without hysteresis:
+OCV-SOC curve extracted from ```25degC/549_C20DisCh.csv```, training done on ```25degC/551_Mixed1.csv``` and validation done on ```25degC/551_LA92.csv```:
 
 | Parameter | R0($\Omega$)    | R1($\Omega$)    | R2($\Omega$) | C1(F)     | C2(F)      | CRMSE(V)             |
 |-----------|------------|------------|---------|---------------|----------------|-------------------|
 | Value     | 0.01951358 | 0.01541913 | 0.5     | 1395.97247796 | 84959.64540431 | 20.095525362647045 |
+
+### RC2 model with hysteresis: TBD
