@@ -15,7 +15,7 @@ class cellSim:
         self.eta = cellDataObj.eta
         self.nRC = 2
         self.nTime = len(cellDataObj.time)
-        self.volt = self.volt[0 : self.nTime]
+        self.volt = self.volt[0: self.nTime]
         self.sign = np.zeros_like(self.curr)
 
     def loadOCV(self):
@@ -51,7 +51,8 @@ class cellSim:
         ]
         index = 0
         self.filenameCellParamsOpti = filenames[index]
-        self.dfCellParamsOpti = pd.read_csv(pathname + self.filenameCellParamsOpti)
+        self.dfCellParamsOpti = pd.read_csv(
+            pathname + self.filenameCellParamsOpti)
         self.r0 = self.dfCellParamsOpti["r0"].to_numpy()
         self.r1 = self.dfCellParamsOpti["r1"].to_numpy()
         self.r2 = self.dfCellParamsOpti["r2"].to_numpy()
@@ -83,7 +84,8 @@ class cellSim:
             self.vC[0, k] = self.iR[0, k] * self.r1
             self.vC[1, k] = self.iR[1, k] * self.r2
             self.vT[k + 1] = (
-                self.testOCV[k] - np.sum(self.vC[:, k]) - self.curr[k] * self.r0
+                self.testOCV[k] - np.sum(self.vC[:, k]) -
+                self.curr[k] * self.r0
             )
 
     def printCellParams(self):
@@ -102,10 +104,10 @@ class cellSim:
         self.cellSim()
         rmsError = self.computeRMS()
         return rmsError
-    
+
     def constraintR0(self, x):
         return x[0]
-    
+
     def constraintRC1(self, x):
         return 1 - x[1] * x[3]
 
@@ -115,11 +117,12 @@ class cellSim:
     def optFn(self):
         print("started parameter extraction via optimization")
         self.scaleFactorC = 1e3
-        x0 = [10e-3, 50e-3, 100e-3, 100e3/self.scaleFactorC, 200e3/self.scaleFactorC]
-        bndsR0 = (1e-3, 50e-3)
-        bndsR = (10e-3, 500e-3)
-        bndsC1 = (1e3/self.scaleFactorC, 20e3/self.scaleFactorC)
-        bndsC2 = (10e3/self.scaleFactorC, 100e3/self.scaleFactorC)
+        x0 = [1e-3, 100e-3, 5e-3, 10e3 /
+              self.scaleFactorC, 100e3/self.scaleFactorC]
+        bndsR0 = (0.1e-3, 50e-3)
+        bndsR = (1e-3, 5000e-3)
+        bndsC1 = (1e3/self.scaleFactorC, 500e3/self.scaleFactorC)
+        bndsC2 = (1e3/self.scaleFactorC, 5000e3/self.scaleFactorC)
         bnds = (bndsR0, bndsR, bndsR, bndsC1, bndsC2)
         # constraint1 = {"type": "ineq", "fun": self.constraintR0}
         # constraint2 = {"type": "ineq", "fun": self.constraintRC1}
@@ -129,7 +132,8 @@ class cellSim:
         minimize(self.objFn, x0, method="SLSQP", bounds=bnds)
 
     def saveCellParamsOpti(self):
-        self.filenameCellParamsOpti = "results/CellParams--" + self.filename.replace("/", "--")
+        self.filenameCellParamsOpti = "results/CellParams--" + \
+            self.filename.replace("/", "--")
         self.dfCellParams = {}
         self.dfCellParams.update({"r0": self.r0})
         self.dfCellParams.update({"r1": self.r1})
@@ -138,7 +142,7 @@ class cellSim:
         self.dfCellParams.update({"c2": self.c2})
         self.dfCellParams = pd.DataFrame(self.dfCellParams, index=[0])
         self.dfCellParams.to_csv(self.filenameCellParamsOpti, index=False)
-        
+
     def runSimValidate(self):
         print("starting validation of RC2 cell model")
         self.loadOCV()
@@ -146,7 +150,7 @@ class cellSim:
         self.loadCellParamsOpti()
         self.printCellParams()
         self.cellSim()
-        print("CRMSE = ", self.computeRMS())
+        print("CRMSE = ", self.computeRMS(), "mV")
 
     def runSimTrain(self):
         print("starting training of RC2 cell model")
@@ -156,4 +160,4 @@ class cellSim:
         self.saveCellParamsOpti()
         self.printCellParams()
         self.cellSim()
-        print("CRMSE = ", self.computeRMS())
+        print("CRMSE = ", self.computeRMS(), "mV")
