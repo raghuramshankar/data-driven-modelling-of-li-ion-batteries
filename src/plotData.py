@@ -49,6 +49,6 @@ class plotData():
         fig4_f1.plot(cellSimObj.time, cellSimObj.volt, "g--", label="True Voltage")
         fig4_f1.set_xlabel("Time [s]")
         fig4_f1.set_ylabel("Voltage [V]")
-        fig4_f1.set_title("Simulated Voltage using " + cellSimObj.filenameCellParamsOpti + " \n and \n Terminal Voltage from " + cellSimObj.filename)
+        fig4_f1.set_title("Simulated Voltage using " + cellSimObj.filenameCellParamsOpti + " \n and \n True Voltage from " + cellSimObj.filename)
         fig4_f1.legend()
         fig4_f1.grid(True)
