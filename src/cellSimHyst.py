@@ -15,8 +15,8 @@ class cellSimHyst:
         self.eta = cellDataObj.eta
         self.nRC = 2
         self.nTime = len(cellDataObj.time)
-        self.volt = self.volt[0 : self.nTime]
-        self.sign = np.zeros_like(self.curr)
+        self.volt = self.volt[0: self.nTime]
+        self.s = np.zeros_like(self.curr)
 
     def loadOCV(self):
         pathname = "results/"
@@ -44,9 +44,9 @@ class cellSimHyst:
         self.overPotVolt = self.volt - self.testOCV
         for i in range(self.nTime):
             if np.abs(self.curr[i]) > 0:
-                self.sign[i] = np.sign(self.curr[i])
+                self.s[i] = np.sign(self.curr[i])
             else:
-                self.sign[i] = self.sign[i-1]
+                self.s[i] = self.s[i-1]
 
         print("extract dynamic done")
 
@@ -57,16 +57,18 @@ class cellSimHyst:
         ]
         index = 0
         self.filenameCellParamsOpti = filenames[index]
-        self.dfCellParamsHystOpti = pd.read_csv(pathname + self.filenameCellParamsOpti)
+        self.dfCellParamsHystOpti = pd.read_csv(
+            pathname + self.filenameCellParamsOpti)
         self.r0 = self.dfCellParamsHystOpti["r0"].to_numpy()
         self.r1 = self.dfCellParamsHystOpti["r1"].to_numpy()
         self.r2 = self.dfCellParamsHystOpti["r2"].to_numpy()
         self.c1 = self.dfCellParamsHystOpti["c1"].to_numpy()
         self.c2 = self.dfCellParamsHystOpti["c2"].to_numpy()
-        # self.m0 = self.dfCellParamsHystOpti["m0"].to_numpy()
-        # self.m = self.dfCellParamsHystOpti["m"].to_numpy()
-        self.m0 = 1.0
-        self.m = 1.0
+        self.m0 = self.dfCellParamsHystOpti["m0"].to_numpy()
+        self.m = self.dfCellParamsHystOpti["m"].to_numpy()
+        self.gamma = self.dfCellParamsHystOpti["gamma"].to_numpy()
+        # self.m0 = 1.0
+        # self.m = 1.0
 
         print("load CellParamsOpti done from " + self.filenameCellParamsOpti)
 
@@ -78,6 +80,7 @@ class cellSimHyst:
     def cellSimHyst(self):
         self.iR = np.zeros((self.nRC, self.nTime))
         self.vC = np.zeros((self.nRC, self.nTime))
+        self.h = np.zeros(self.nTime)
         self.vT = np.zeros(self.nTime)
         self.vT[0] = self.testOCV[0]
         self.f = [
@@ -92,8 +95,14 @@ class cellSimHyst:
             )
             self.vC[0, k] = self.iR[0, k] * self.r1
             self.vC[1, k] = self.iR[1, k] * self.r2
+            self.aH = np.exp(-abs(self.eta *
+                             self.curr[k] * self.gamma * self.dt/self.capacityOCV))
+            self.h[k + 1] = self.aH * self.h[k] - \
+                (1 - self.aH) * np.sign(self.curr[k])
             self.vT[k + 1] = (
-                self.testOCV[k] - np.sum(self.vC[:, k]) - self.curr[k] * self.r0
+                self.testOCV[k] - np.sum(self.vC[:, k]) -
+                self.curr[k] * self.r0 + self.m0 *
+                self.s[k] + self.m * self.h[k]
             )
 
     def printCellParams(self):
@@ -104,22 +113,26 @@ class cellSimHyst:
         print("C2 = ", self.c2, "farad")
         print("M0 = ", self.m0)
         print("M = ", self.m)
+        print("Gamma = ", self.gamma)
 
     def objFn(self, x0):
-        self.r0 = x0[0]
-        self.r1 = x0[1]
-        self.r2 = x0[2]
-        self.c1 = x0[3] * self.scaleFactorC
-        self.c2 = x0[4] * self.scaleFactorC
-        self.m0 = x0[4] * self.scaleFactorM
-        self.m = x0[5] * self.scaleFactorM
-        self.cellSim()
+        self.r0 = x0[3]
+        self.r1 = x0[4]
+        self.r2 = x0[5]
+        self.c1 = x0[6] * self.scaleFactorC
+        self.c2 = x0[7] * self.scaleFactorC
+        self.m0 = x0[0] * self.scaleFactorM
+        self.m = x0[1] * self.scaleFactorM
+        self.gamma = x0[2] * self.scaleFactorM
+        # self.m = self.m
+        # self.gamma = self.gamma
+        self.cellSimHyst()
         rmsError = self.computeRMS()
         return rmsError
-    
+
     def constraintR0(self, x):
         return x[0]
-    
+
     def constraintRC1(self, x):
         return 1 - x[1] * x[3]
 
@@ -127,16 +140,16 @@ class cellSimHyst:
         return 10 - x[2] * x[4]
 
     def optFn(self):
-        print("started parameter extraction via optimization")
-        self.scaleFactorC = 1e3
-        self.scaleFactorM = 1e-3
-        x0 = [10e-3, 50e-3, 100e-3, 100e3/self.scaleFactorC, 200e3/self.scaleFactorC, 1/self.scaleFactorM, 1/self.scaleFactorM]
-        bndsR0 = (1e-3, 50e-3)
-        bndsR = (10e-3, 500e-3)
-        bndsC1 = (1e3/self.scaleFactorC, 20e3/self.scaleFactorC)
-        bndsC2 = (10e3/self.scaleFactorC, 100e3/self.scaleFactorC)
-        bndsM = (0.0, 2.0)
-        bnds = (bndsR0, bndsR, bndsR, bndsC1, bndsC2, bndsM, bndsM)
+        print("started hysteresis parameter extraction via optimization")
+        self.scaleFactorC = 1e6
+        self.scaleFactorM = 1e3
+        x0 = [100.0/self.scaleFactorM, 100.0/self.scaleFactorM, 100.0/self.scaleFactorM, 1e-3, 1e-2, 1e-2, 100e3 /
+              self.scaleFactorC, 100e3/self.scaleFactorC]
+        bndsM = (0/self.scaleFactorM, 1e3/self.scaleFactorM)
+        bndsR0 = (0.1e-3, 100e-3)
+        bndsR = (1e-3, 5000e-3)
+        bndsC = (1e3/self.scaleFactorC, 500e3/self.scaleFactorC)
+        bnds = (bndsM, bndsM, bndsM, bndsR0, bndsR, bndsR, bndsC, bndsC)
         # constraint1 = {"type": "ineq", "fun": self.constraintR0}
         # constraint2 = {"type": "ineq", "fun": self.constraintRC1}
         # constraint3 = {"type": "ineq", "fun": self.constraintRC2}
@@ -145,17 +158,20 @@ class cellSimHyst:
         minimize(self.objFn, x0, method="SLSQP", bounds=bnds)
 
     def saveCellParamsOpti(self):
-        self.filenameCellParamsOpti = "results/CellParamsHyst--" + self.filename.replace("/", "--")
+        self.filenameCellParamsHystOpti = "results/CellParamsHyst--" + \
+            self.filename.replace("/", "--")
         self.dfCellParamsHyst = {}
         self.dfCellParamsHyst.update({"r0": self.r0})
         self.dfCellParamsHyst.update({"r1": self.r1})
         self.dfCellParamsHyst.update({"r2": self.r2})
         self.dfCellParamsHyst.update({"c1": self.c1})
         self.dfCellParamsHyst.update({"c2": self.c2})
-        self.dfCellParamsHyst.update({"m0": self.c2})
-        self.dfCellParamsHyst.update({"m": self.c2})
+        self.dfCellParamsHyst.update({"m0": self.m0})
+        self.dfCellParamsHyst.update({"m": self.m})
+        self.dfCellParamsHyst.update({"gamma": self.gamma})
         self.dfCellParamsHyst = pd.DataFrame(self.dfCellParamsHyst, index=[0])
-        self.dfCellParamsHyst.to_csv(self.filenameCellParamsHystOpti, index=False)
+        self.dfCellParamsHyst.to_csv(
+            self.filenameCellParamsHystOpti, index=False)
 
     def runSimValidate(self):
         print("starting validation of RC2 hysteresis cell model")
@@ -169,6 +185,7 @@ class cellSimHyst:
     def runSimTrain(self):
         print("starting training of RC2 hysteresis cell model")
         self.loadOCV()
+        self.loadCellParamsOpti()
         self.extractDynamic()
         self.optFn()
         self.saveCellParamsOpti()

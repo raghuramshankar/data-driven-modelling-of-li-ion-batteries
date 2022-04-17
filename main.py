@@ -45,17 +45,17 @@ def main():
     cellDataObj.extractData()
     # plotDataObj.plotDataFromDataset(cellDataObj)
 
-    cellSimObj = cellSim(cellDataObj)
+    # cellSimObj = cellSim(cellDataObj)
     # cellSimObj.runSimTrain()
-    cellSimObj.runSimValidate()
+    # cellSimObj.runSimValidate()
     # plotDataObj.plotLoadedOCV(cellSimObj)
-    plotDataObj.plotDynamic(cellSimObj)
+    # plotDataObj.plotDynamic(cellSimObj)
 
-    # cellSimHystObj = cellSimHyst(cellDataObj)
+    cellSimHystObj = cellSimHyst(cellDataObj)
     # cellSimHystObj.runSimTrain()
-    # cellSimHystObj.runSimValidate()
+    cellSimHystObj.runSimValidate()
     # plotDataObj.plotLoadedOCV(cellSimHystObj)
-    # plotDataObj.plotDynamic(cellSimHystObj)
+    plotDataObj.plotDynamic(cellSimHystObj)
 
     plt.show()
 
