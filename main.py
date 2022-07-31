@@ -15,17 +15,22 @@ def main():
     pathname = (
         "datasets/lg-18650hg2/LG_HG2_Original_Dataset_McMasterUniversity_Jan_2020/"
     )
+    '''define test temperature in deg C'''
     temp = "25degC/"
+    '''obtain a list of filenames in above pathname'''
     filenames = [
         filename
         for filename in os.listdir(pathname + temp)
         if filename.endswith(".csv")
     ]
+    '''create pandas dataframe with length of filenames as number of rows'''
     d = pd.DataFrame(filenames)
+    '''convert dataframe to csv'''
     d.to_csv("filenames.csv", header=None, index=False)
+    '''save dataframe as list of available tests done to csv'''
     filename = temp + "549_C20DisCh.csv"
 
-    """extract ocv-soc curve"""
+    '''create class objects'''
     cellDataObj = cellData(filename, pathname)
     plotDataObj = plotData()
 
