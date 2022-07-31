@@ -49,7 +49,7 @@ class cellSim:
         filenames = [
             filename for filename in os.listdir(pathname) if filename.startswith("CellParams")
         ]
-        index = 0
+        index = 1
         self.filenameCellParamsOpti = filenames[index]
         self.dfCellParamsOpti = pd.read_csv(
             pathname + self.filenameCellParamsOpti)
@@ -117,7 +117,7 @@ class cellSim:
     def optFn(self):
         print("started parameter extraction via optimization")
         self.scaleFactorC = 1e3
-        x0 = [1e-3, 100e-3, 5e-3, 10e3 /
+        x0 = [1e-3, 1e-2, 1e-2, 100e3 /
               self.scaleFactorC, 100e3/self.scaleFactorC]
         bndsR0 = (0.1e-3, 50e-3)
         bndsR = (1e-3, 5000e-3)

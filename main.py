@@ -37,29 +37,30 @@ def main():
     cellDataObj.extractData()
     # plotDataObj.plotDataFromDataset(cellDataObj)
 
-    cellExtractOCVObj = cellExtractOCV(cellDataObj)
-    cellExtractOCVObj.runOCV()
+    # cellExtractOCVObj = cellExtractOCV(cellDataObj)
+    # cellExtractOCVObj.runOCV()
     # plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
     """train/validate model parameters"""
     # filename = temp + "551_Mixed1.csv"
-    filename = temp + "551_US06.csv"
+    # filename = temp + "551_US06.csv"
+    filename = temp + "551_LA92.csv"
     cellDataObj = cellData(filename, pathname)
 
     cellDataObj.extractData()
     # plotDataObj.plotDataFromDataset(cellDataObj)
 
-    cellSimObj = cellSim(cellDataObj)
+    # cellSimObj = cellSim(cellDataObj)
     # cellSimObj.runSimTrain()
-    cellSimObj.runSimValidate()
+    # cellSimObj.runSimValidate()
     # plotDataObj.plotLoadedOCV(cellSimObj)
-    plotDataObj.plotDynamic(cellSimObj)
+    # plotDataObj.plotDynamic(cellSimObj)
 
-    # cellSimHystObj = cellSimHyst(cellDataObj)
+    cellSimHystObj = cellSimHyst(cellDataObj)
     # cellSimHystObj.runSimTrain()
-    # cellSimHystObj.runSimValidate()
+    cellSimHystObj.runSimValidate()
     # plotDataObj.plotLoadedOCV(cellSimHystObj)
-    # plotDataObj.plotDynamic(cellSimHystObj)
+    plotDataObj.plotDynamic(cellSimHystObj)
 
     plt.show()
 
