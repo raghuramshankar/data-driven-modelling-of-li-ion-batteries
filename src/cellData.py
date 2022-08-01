@@ -5,10 +5,10 @@ import pandas as pd
 class cellData:
     """
     
-    Extracts dataframe from dataset csv found in the pathname and filename input.
-    Creates a column for time of experiment based on progTime.
+    Extracts dataframe from dataset csv found in the pathname and filename input
+    Creates a column for time of experiment based on progTime
     Assigns class variables for voltage, current and discharge capacity, sample time
-    and coulombic efficiency found from dataset.
+    and coulombic efficiency found from dataset
 
     Args:
         None

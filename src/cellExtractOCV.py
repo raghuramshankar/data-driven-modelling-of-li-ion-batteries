@@ -3,11 +3,42 @@ import pandas as pd
 
 
 class cellExtractOCV:
+    """
+    
+    Extracts OCV data from dataframe and computes OCV
+
+    Args:
+        None
+    
+    """
     def __init__(self, cellDataObj):
+        """
+        
+        Initializes cellExtractOCV class object by copying data from cellDataObj
+
+        Args:
+            self (cellExtractOCV): Pointer to cellExtractOCV class object
+            cellDataObj (cellData): cellData class object
+        
+        """
+        # Copy the cellDataObj dataframe to self
         self.df = cellDataObj.df
+
+        # Copy the cellDataObj filename to self
         self.filename = cellDataObj.filename
 
     def extractOCV(self):
+        """
+        
+        Extract OCV data from dataframe
+        Uses Status column to determine different stages of the OCV experiment
+
+        Args:
+            self (cellExtractOCV): Pointer to cellExtractOCV object
+        Returns:
+            None
+        
+        """
         self.disOCV = [
             self.df["Voltage"].to_numpy()[i]
             for i in range(len(self.df))
@@ -45,6 +76,17 @@ class cellExtractOCV:
         print("extract OCV done")
 
     def computeOCV(self):
+        """
+        
+        Compute OCV by clipping the Charge OCV data to the length of discharge OCV data
+        Compute SOC using discharge capacity and charge discharged
+
+        Args:
+            self (cellExtractOCV): Pointer to cellExtractOCV class object
+        Returns:
+            None
+        
+        """
         self.OCV = (self.disOCV + self.chgOCV[0 : len(self.disOCV)]) / 2
         self.disCapacity = -self.disCap[-1]
         self.SOC = np.flip(np.negative(self.disCap) / self.disCapacity)
@@ -52,6 +94,16 @@ class cellExtractOCV:
         print("compute OCV done")
 
     def saveOCV(self):
+        """
+        
+        Saves the OCV-SOC data in a different dataframe
+
+        Args:
+            self (cellExtractOCV): Pointer to cellExtractOCV class object
+        Returns:
+            None
+        
+        """
         self.dfOCV = {}
         self.dfOCV.update({"time": self.chgTime[0 : len(self.disOCV)]})
         self.dfOCV.update({"OCV": self.OCV})
@@ -67,6 +119,16 @@ class cellExtractOCV:
         print("save OCV done")
 
     def runOCV(self):
+        """
+        
+        Runs all the OCV-SOC functions in this class
+
+        Args:
+            self (cellExtractOCV): Pointer to cellExtractOCV class object
+        Returns:
+            None
+        
+        """
         self.extractOCV()
         self.computeOCV()
         self.saveOCV()
