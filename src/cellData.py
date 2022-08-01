@@ -23,20 +23,49 @@ class cellData:
         self.fullname = self.pathname + self.filename
 
     def convertToSec(self, progTime):
+        """
+        
+        Converts time in hours to seconds
+
+        Args:
+            self (cellData): Pointer to cellData class object
+            progTime (string): experiment progress time in hours
+        Returns:
+            expression (float): time in seconds
+        
+        """
         [h, m, s] = map(float, progTime.split(":"))
         return h * 3600 + m * 60 + s
 
     def extractData(self):
+        """
+        
+        Extracts data from dataset and assigns class variables
+
+        Args:
+            self (cellData): Pointer to cellData class object
+        Returns:
+            None
+        
+        """
+        # Skip first 28 rows
         self.df = pd.read_csv(self.fullname, skiprows=28, dtype=str)
+
+        # Clean up self.df
         self.df = self.df.loc[:, ~self.df.columns.str.contains("^Unnamed")]
         self.df = self.df.drop(0)
+
+        # Convert self.df to numpy df
         self.df = self.df.apply(pd.to_numeric, errors="ignore")
+
+        # Compute time in seconds and add to self.df
         self.progTime = [
             self.convertToSec(progTime) for progTime in self.df["Prog Time"]
         ]
         self.time = [progTime - self.progTime[0] for progTime in self.progTime]
         self.df["Time"] = [time for time in self.time]
 
+        # Create variables
         self.volt = np.asarray([voltage for voltage in self.df["Voltage"]])
         self.curr = np.asarray([-current for current in self.df["Current"]])
         self.disCap = np.asarray([capacity for capacity in self.df["Capacity"]])
