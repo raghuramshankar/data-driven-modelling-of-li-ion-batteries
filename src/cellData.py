@@ -5,7 +5,7 @@ import pandas as pd
 class cellData:
     """
     
-    Extracts data from dataset found in the pathname and filename input.
+    Extracts dataframe from dataset csv found in the pathname and filename input.
     Creates a column for time of experiment based on progTime.
     Assigns class variables for voltage, current and discharge capacity, sample time
     and coulombic efficiency found from dataset.
@@ -40,7 +40,7 @@ class cellData:
     def extractData(self):
         """
         
-        Extracts data from dataset and assigns class variables
+        Extracts dataframe from dataset csv and assigns class variables
 
         Args:
             self (cellData): Pointer to cellData class object
