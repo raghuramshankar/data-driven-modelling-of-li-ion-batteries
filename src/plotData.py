@@ -21,11 +21,11 @@ class plotData():
     def plotDataFromDataset(self, cellDataObj):
         """
         
-        Figure 1: plot true terminal voltage from cell dataset
+        Figure 1: Plot true terminal voltage from cell dataset
 
         Args:
-            self: pointer to class object calling the function
-            cellDataObj: cellData class object
+            self (plotData): Pointer to plotData class object
+            cellDataObj (cellData): cellData class object
         Returns:
             None
 
@@ -43,11 +43,11 @@ class plotData():
     def plotComputedOCV(self, cellExtractOCVObj):
         """
         
-        Figure 2: plot extracted cell OCVs
+        Figure 2: Plot extracted cell OCVs
 
         Args:
-            self: pointer to class object calling the function
-            cellDataObj: cellExtractOCV class object
+            self (plotData): Pointer to plotData class object
+            cellExtractOCVObj (cellExtractOCV): cellExtractOCV class object
         Returns:
             None
 
@@ -67,11 +67,11 @@ class plotData():
     def plotLoadedOCV(self, cellSimObj):
         """
         
-        Figure 3: plot loaded OCV from saved file
+        Figure 3: Plot loaded OCV from saved file
 
         Args:
-            self: pointer to class object calling the function
-            cellDataObj: cellSim class object
+            self (plotData): Pointer to plotData class object
+            cellSimObj (cellSim): cellSim class object
         Returns:
             None
 
@@ -89,11 +89,11 @@ class plotData():
     def plotDynamic(self, cellSimObj):
         """
         
-        Figure 4: plot simulated terminal voltage and true terminal voltage
+        Figure 4: Plot simulated terminal voltage and true terminal voltage
 
         Args:
-            self: pointer to class object calling the function
-            cellDataObj: cellSim class object
+            self (plotData): Pointer to plotData class object
+            cellDataObj (cellData): cellSim class object
         Returns:
             None
 
