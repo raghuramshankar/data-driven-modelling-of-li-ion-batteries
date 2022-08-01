@@ -11,8 +11,6 @@ class plotData():
 
     Args:
         None
-    Returns:
-        None
 
     """
     def __init__(self):
@@ -21,7 +19,17 @@ class plotData():
         self.h = self.l*3/4
 
     def plotDataFromDataset(self, cellDataObj):
-        # Figure 1: plot true terminal voltage from cell dataset
+        """
+        
+        Figure 1: plot true terminal voltage from cell dataset
+
+        Args:
+            self: pointer to class object calling the function
+            cellDataObj: cellData class object
+        Returns:
+            None
+
+        """
         fig1 = plt.figure(figsize=(self.l, self.h))
 
         fig1_f1 = fig1.add_subplot(111)
@@ -33,7 +41,17 @@ class plotData():
         fig1_f1.grid(True)
 
     def plotComputedOCV(self, cellExtractOCVObj):
-        # Figure 2: plot extracted cell OCVs
+        """
+        
+        Figure 2: plot extracted cell OCVs
+
+        Args:
+            self: pointer to class object calling the function
+            cellDataObj: cellExtractOCV class object
+        Returns:
+            None
+
+        """
         fig2 = plt.figure(figsize=(self.l, self.h))
 
         fig2_f1 = fig2.add_subplot(111)
@@ -47,7 +65,17 @@ class plotData():
         fig2_f1.grid(True)
     
     def plotLoadedOCV(self, cellSimObj):
-        # Figure 3: plot loaded OCV from saved file
+        """
+        
+        Figure 3: plot loaded OCV from saved file
+
+        Args:
+            self: pointer to class object calling the function
+            cellDataObj: cellSim class object
+        Returns:
+            None
+
+        """
         fig3 = plt.figure(figsize=(self.l, self.h))
 
         fig3_f1 = fig3.add_subplot(111)
@@ -59,7 +87,17 @@ class plotData():
         fig3_f1.grid(True)
 
     def plotDynamic(self, cellSimObj):
-        # Figure 4: plot simulated voltage and true terminal voltage
+        """
+        
+        Figure 4: plot simulated terminal voltage and true terminal voltage
+
+        Args:
+            self: pointer to class object calling the function
+            cellDataObj: cellSim class object
+        Returns:
+            None
+
+        """
         fig4 = plt.figure(figsize=(self.l, self.h))
 
         fig4_f1 = fig4.add_subplot(111)

@@ -3,9 +3,23 @@ import pandas as pd
 
 
 class cellData:
+    """
+    
+    Extracts data from dataset found in the pathname and filename input.
+    Creates a column for time of experiment based on progTime.
+    Assigns class variables for voltage, current and discharge capacity, sample time
+    and coulombic efficiency found from dataset.
+
+    Args:
+        None
+
+    """
     def __init__(self, filename, pathname):
+        # Copy filename and pathname to class variables
         self.pathname = pathname
         self.filename = filename
+
+        # Create fullname class variable by concatenating pathname and filename
         self.fullname = self.pathname + self.filename
 
     def convertToSec(self, progTime):
