@@ -11,26 +11,41 @@ from src.plotData import plotData
 
 
 def main():
-    """create list of tests available from dataset"""
+    """
+
+    Main function that calls desired functions
+    
+    Args:
+        None
+    Returns:
+        None
+    
+    """
+    # Create list of tests available from dataset
     pathname = (
         "datasets/lg-18650hg2/LG_HG2_Original_Dataset_McMasterUniversity_Jan_2020/"
     )
-    '''define test temperature in deg C'''
+
+    # Define test temperature in deg C
     temp = "25degC/"
-    '''obtain a list of filenames in above pathname'''
+
+    # Obtain a list of filenames in above pathname
     filenames = [
         filename
         for filename in os.listdir(pathname + temp)
         if filename.endswith(".csv")
     ]
-    '''create pandas dataframe with length of filenames as number of rows'''
+
+    # Create pandas dataframe with length of filenames as number of rows
     d = pd.DataFrame(filenames)
-    '''convert dataframe to csv'''
+
+    # Convert dataframe to csv
     d.to_csv("filenames.csv", header=None, index=False)
-    '''save dataframe as list of available tests done to csv'''
+
+    # Save dataframe as list of available tests done to csv
     filename = temp + "549_C20DisCh.csv"
 
-    '''create class objects'''
+    # Create class objects
     cellDataObj = cellData(filename, pathname)
     plotDataObj = plotData()
 
@@ -41,7 +56,7 @@ def main():
     # cellExtractOCVObj.runOCV()
     # plotDataObj.plotComputedOCV(cellExtractOCVObj)
 
-    """train/validate model parameters"""
+    # train/validate model parameters
     # filename = temp + "551_Mixed1.csv"
     # filename = temp + "551_US06.csv"
     filename = temp + "551_LA92.csv"
