@@ -5,7 +5,7 @@ import pandas as pd
 
 from src.cellData import cellData
 from src.cellExtractOCV import cellExtractOCV
-from src.cellSim import cellSim
+from src.cellTrainValidate import cellTrainValidate
 from src.cellSimHyst import cellSimHyst
 from src.plotData import plotData
 
@@ -65,17 +65,17 @@ def main():
     cellDataObj.extractData()
     # plotDataObj.plotDataFromDataset(cellDataObj)
 
-    # cellSimObj = cellSim(cellDataObj)
-    # cellSimObj.runSimTrain()
-    # cellSimObj.runSimValidate()
-    # plotDataObj.plotLoadedOCV(cellSimObj)
-    # plotDataObj.plotDynamic(cellSimObj)
+    cellTrainValidateObj = cellTrainValidate(cellDataObj)
+    # cellTrainValidateObj.runSimTrain()
+    cellTrainValidateObj.runSimValidate()
+    plotDataObj.plotLoadedOCV(cellTrainValidateObj)
+    plotDataObj.plotDynamic(cellTrainValidateObj)
 
-    cellSimHystObj = cellSimHyst(cellDataObj)
+    # cellSimHystObj = cellSimHyst(cellDataObj)
     # cellSimHystObj.runSimTrain()
-    cellSimHystObj.runSimValidate()
+    # cellSimHystObj.runSimValidate()
     # plotDataObj.plotLoadedOCV(cellSimHystObj)
-    plotDataObj.plotDynamic(cellSimHystObj)
+    # plotDataObj.plotDynamic(cellSimHystObj)
 
     plt.show()
 
