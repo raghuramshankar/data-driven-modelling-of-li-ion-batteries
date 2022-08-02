@@ -6,7 +6,27 @@ from scipy.optimize import minimize
 
 
 class cellSim:
+    """
+    
+    Computes the RC cell model parameters using loaded OCV data and training dynamic data
+    Validates the RC cell model parameters by simulating using the validation dynamic data
+    Computes the CRMSE between the simulated cell and true validation dynamic data
+
+    Args:
+        None
+    
+    """
     def __init__(self, cellDataObj):
+        """
+        
+        Initializes the cellSim class by copying data from cellDataObj
+        Clips the true cell voltage to the time of experiment
+
+        Args:
+            self (cellSim): Pointer to cellSim class object
+            cellDataObj (cellData): cellData class object
+
+        """
         self.filename = cellDataObj.filename
         self.time = cellDataObj.time
         self.volt = cellDataObj.volt
@@ -19,6 +39,16 @@ class cellSim:
         self.sign = np.zeros_like(self.curr)
 
     def loadOCV(self):
+        """
+        
+        Loads the extracted OCV-SOC data from preselected index and saves it as class variables
+
+        Args:
+            self
+        Returns:
+            None
+        
+        """
         pathname = "results/"
         filenames = [
             filename for filename in os.listdir(pathname) if filename.startswith("OCV")
@@ -34,6 +64,16 @@ class cellSim:
         print("load OCV done")
 
     def extractDynamic(self):
+        """
+        
+        Computes the overpotential between true terminal voltage and estimated OCV at each datapoint
+
+        Args:
+            self
+        Returns:
+            None
+        
+        """
         self.initSOC = self.SOCOCV[np.argmin(abs(self.voltOCV - self.volt[0]))]
         self.testSOC = self.initSOC - self.dt / (
             self.capacityOCV * 3600
@@ -45,6 +85,16 @@ class cellSim:
         print("extract dynamic done")
 
     def loadCellParamsOpti(self):
+        """
+        
+        Loads the saved trained cell parameters and saves them as class variables
+
+        Args:
+            self
+        Returns:
+            None
+        
+        """
         pathname = "results/"
         filenames = [
             filename for filename in os.listdir(pathname) if filename.startswith("CellParams")
@@ -62,11 +112,31 @@ class cellSim:
         print("load CellParamsOpti done from " + self.filenameCellParamsOpti)
 
     def computeRMS(self):
+        """
+        
+        Computes the CRMSE between training/validation terminal voltage and true terminal voltage
+
+        Args:
+            self
+        Returns:
+            None
+        
+        """
         self.rmsError = 1000 * np.sqrt(np.mean(np.square(self.vT - self.volt)))
 
         return self.rmsError
 
     def cellSim(self):
+        """
+        
+        Simulates the terminal voltage for the entire experiment time using the estimated cell parameters
+
+        Args:
+            self
+        Returns:
+            None
+        
+        """
         self.iR = np.zeros((self.nRC, self.nTime))
         self.vC = np.zeros((self.nRC, self.nTime))
         self.vT = np.zeros(self.nTime)
@@ -89,6 +159,16 @@ class cellSim:
             )
 
     def printCellParams(self):
+        """
+        
+        Prints the estimated cell parameters from training data
+        
+        Args:
+            self
+        Returns:
+            None
+
+        """
         print("R0 = ", self.r0, "ohm")
         print("R1 = ", self.r1, "ohm")
         print("R2 = ", self.r2, "ohm")
@@ -96,6 +176,16 @@ class cellSim:
         print("C2 = ", self.c2, "farad")
 
     def objFn(self, x0):
+        """
+        
+        Objective function for estimating cell params from training data
+        Initializes RC params from optimization function
+        Computes CRMSE and uses that as goodness of fit
+
+        Args:
+            self
+        
+        """
         self.r0 = x0[0]
         self.r1 = x0[1]
         self.r2 = x0[2]
