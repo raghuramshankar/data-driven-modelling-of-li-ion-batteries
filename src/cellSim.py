@@ -5,7 +5,7 @@ import pandas as pd
 from scipy.optimize import minimize
 
 
-class cellSim:
+class cellTrainValidate:
     """
     
     Computes the RC cell model parameters using loaded OCV data and training dynamic data
@@ -44,7 +44,7 @@ class cellSim:
         Loads the extracted OCV-SOC data from preselected index and saves it as class variables
 
         Args:
-            self
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
         Returns:
             None
         
@@ -53,6 +53,8 @@ class cellSim:
         filenames = [
             filename for filename in os.listdir(pathname) if filename.startswith("OCV")
         ]
+
+
         index = 0
         self.filenameOCV = filenames[index]
         self.dfOCV = pd.read_csv(pathname + self.filenameOCV)
@@ -69,18 +71,28 @@ class cellSim:
         Computes the overpotential between true terminal voltage and estimated OCV at each datapoint
 
         Args:
-            self
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
         Returns:
             None
         
         """
+        # Find the initial SOC value by:
+        # 1. Find the initial terminal voltage (assumed as OCV)
+        # 2. Find the index of the initial terminal voltage in the OCV-SOC table
+        # 3. Find the value of SOC using the above index value
         self.initSOC = self.SOCOCV[np.argmin(abs(self.voltOCV - self.volt[0]))]
+
+        # Compute the test SOC values by using the coulomb counting formula
         self.testSOC = self.initSOC - self.dt / (
             self.capacityOCV * 3600
         ) * self.eta * np.cumsum(self.curr)
+
+        # Compute the test OCV values by using a similar method to finding the initial SOC
         self.testOCV = [
             self.voltOCV[np.argmin(abs(self.SOCOCV - soc))] for soc in self.testSOC
         ]
+
+        # Compute the overpotential voltage by finding the difference between true terminal voltage and test OCV voltage 
         self.overPotVolt = self.volt - self.testOCV
         print("extract dynamic done")
 
@@ -90,7 +102,7 @@ class cellSim:
         Loads the saved trained cell parameters and saves them as class variables
 
         Args:
-            self
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
         Returns:
             None
         
@@ -99,6 +111,8 @@ class cellSim:
         filenames = [
             filename for filename in os.listdir(pathname) if filename.startswith("CellParams")
         ]
+
+        # Select the cell parameters to load
         index = 1
         self.filenameCellParamsOpti = filenames[index]
         self.dfCellParamsOpti = pd.read_csv(
@@ -117,7 +131,7 @@ class cellSim:
         Computes the CRMSE between training/validation terminal voltage and true terminal voltage
 
         Args:
-            self
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
         Returns:
             None
         
@@ -132,21 +146,30 @@ class cellSim:
         Simulates the terminal voltage for the entire experiment time using the estimated cell parameters
 
         Args:
-            self
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
         Returns:
             None
         
         """
+        # Allocate memory for simulation variables
         self.iR = np.zeros((self.nRC, self.nTime))
         self.vC = np.zeros((self.nRC, self.nTime))
         self.vT = np.zeros(self.nTime)
+
+        # Initialize the first element of terminal voltage array
         self.vT[0] = self.testOCV[0]
+
+        # Compute f matrix from dt and RC parameters
         self.f = [
             np.exp(-self.dt / np.dot(self.r1, self.c1)),
             np.exp(-self.dt / np.dot(self.r2, self.c2))
         ]
+
+        # Compute a and b matrices from f matrix
         self.aRC = np.diag(self.f)
         self.bRC = np.ones(self.nRC) - self.f
+
+        # Simulate the cell
         for k in range(self.nTime - 1):
             self.iR[:, k + 1] = (
                 np.dot(self.aRC, self.iR[:, k]) + self.bRC * self.curr[k]
@@ -164,7 +187,7 @@ class cellSim:
         Prints the estimated cell parameters from training data
         
         Args:
-            self
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
         Returns:
             None
 
@@ -183,7 +206,10 @@ class cellSim:
         Computes CRMSE and uses that as goodness of fit
 
         Args:
-            self
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
+            x0 (float array): Cell RC parameter array [R0, R1, R2, C1, C2]
+        Returns:
+            rmsError (float): CRMSE of simulated terminal voltage versus true terminal voltage 
         
         """
         self.r0 = x0[0]
@@ -195,33 +221,48 @@ class cellSim:
         rmsError = self.computeRMS()
         return rmsError
 
-    def constraintR0(self, x):
-        return x[0]
-
-    def constraintRC1(self, x):
-        return 1 - x[1] * x[3]
-
-    def constraintRC2(self, x):
-        return 10 - x[2] * x[4]
-
     def optFn(self):
+        """
+        
+        Optimization function for parameter extraction
+        Uses scale factors for resistances and capacitances to converge quicker and better
+        Uses upper and lower bounds for resistances and capacitances in the optimization function
+        Uses scipy.minimize to perform gradient descent using CRMSE to measure goodness of fit
+
+        Args:
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
+        Returns:
+            None
+        
+        """
         print("started parameter extraction via optimization")
+
+        # Define scale factors for RC parameters
         self.scaleFactorC = 1e3
         x0 = [1e-3, 1e-2, 1e-2, 100e3 /
               self.scaleFactorC, 100e3/self.scaleFactorC]
+
+        # Define bounds for RC parameters
         bndsR0 = (0.1e-3, 50e-3)
         bndsR = (1e-3, 5000e-3)
         bndsC1 = (1e3/self.scaleFactorC, 500e3/self.scaleFactorC)
         bndsC2 = (1e3/self.scaleFactorC, 5000e3/self.scaleFactorC)
         bnds = (bndsR0, bndsR, bndsR, bndsC1, bndsC2)
-        # constraint1 = {"type": "ineq", "fun": self.constraintR0}
-        # constraint2 = {"type": "ineq", "fun": self.constraintRC1}
-        # constraint3 = {"type": "ineq", "fun": self.constraintRC2}
-        # cons = [constraint1, constraint2, constraint3]
-        # minimize(self.objFn, x0, method="SLSQP", bounds=bnds, constraints=cons)
+
+        # Run the optimization function
         minimize(self.objFn, x0, method="SLSQP", bounds=bnds)
 
     def saveCellParamsOpti(self):
+        """
+        
+        Saves the obtained optimized cell parameters as class variables, dataframe and csv
+
+        Args:
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
+        Returns:
+            None
+        
+        """
         self.filenameCellParamsOpti = "results/CellParams--" + \
             self.filename.replace("/", "--")
         self.dfCellParams = {}
@@ -233,21 +274,43 @@ class cellSim:
         self.dfCellParams = pd.DataFrame(self.dfCellParams, index=[0])
         self.dfCellParams.to_csv(self.filenameCellParamsOpti, index=False)
 
-    def runSimValidate(self):
-        print("starting validation of RC2 cell model")
-        self.loadOCV()
-        self.extractDynamic()
-        self.loadCellParamsOpti()
-        self.printCellParams()
-        self.cellSim()
-        print("CRMSE = ", self.computeRMS(), "mV")
-
     def runSimTrain(self):
+        """
+        
+        Calls class functions to train cell parameters by simulation and optimization
+        Also finds CRMSE with true terminal voltage
+
+        Args:
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
+        Returns:
+            None
+        
+        """
         print("starting training of RC2 cell model")
         self.loadOCV()
         self.extractDynamic()
         self.optFn()
         self.saveCellParamsOpti()
+        self.printCellParams()
+        self.cellSim()
+        print("CRMSE = ", self.computeRMS(), "mV")
+
+    def runSimValidate(self):
+        """
+        
+        Calls class functions to validate cell parameters by simulating and 
+        finding CRMSE with true terminal voltage
+
+        Args:
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
+        Returns:
+            None
+        
+        """
+        print("starting validation of RC2 cell model")
+        self.loadOCV()
+        self.extractDynamic()
+        self.loadCellParamsOpti()
         self.printCellParams()
         self.cellSim()
         print("CRMSE = ", self.computeRMS(), "mV")
