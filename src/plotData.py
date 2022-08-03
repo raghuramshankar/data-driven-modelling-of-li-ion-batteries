@@ -124,10 +124,8 @@ class plotData():
         fig5 = plt.figure(figsize=(self.l, self.h))
 
         fig5_f1 = fig5.add_subplot(111)
-        fig5_f1.plot(cellTrainValidateObj.time, cellTrainValidateObj.vT, "b", label="Simulated Voltage")
-        fig5_f1.plot(cellTrainValidateObj.time, cellTrainValidateObj.volt, "g--", label="True Voltage")
+        fig5_f1.plot(cellTrainValidateObj.rc1, cellTrainValidateObj.visRMS, "b", label="CRMSE vs RC1")
         fig5_f1.set_xlabel("Time [s]")
-        fig5_f1.set_ylabel("Voltage [V]")
-        fig5_f1.set_title("Simulated Voltage using " + cellTrainValidateObj.filenameCellParamsOpti + " \n and \n True Voltage from " + cellTrainValidateObj.filename)
+        fig5_f1.set_ylabel("CRMSE [V]")
         fig5_f1.legend()
         fig5_f1.grid(True)    

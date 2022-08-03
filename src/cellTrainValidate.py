@@ -327,21 +327,23 @@ class cellTrainValidate:
         
         """
         # Define range for input
-        bndsR0 = 1e-1
-        bndsR1 = 1e-1
-        bndsR2 = 1e-1
+        bndsR0 = 1
+        bndsR1 = 1
+        bndsR2 = 1
         bndsC1 = 1e4
         bndsC2 = 1e4
 
         # Sample inputs uniformly
-        visR0 = np.arange(0, bndsR0, 0.1)
-        visR1 = np.arange(0, bndsR1, 0.1)
-        visR2 = np.arange(0, bndsR2, 0.1)
-        visC1 = np.arange(0, bndsC1, 0.1)
-        visC2 = np.arange(0, bndsC2, 0.1)
+        visR0 = np.arange(0, bndsR0, 0.01)
+        visR1 = np.arange(0, bndsR1, 0.01)
+        visR2 = np.arange(0, bndsR2, 0.01)
+        visC1 = np.arange(0, bndsC1, 0.01)
+        visC2 = np.arange(0, bndsC2, 0.01)
 
         # Initialize CRMSE variable
-        visRMS = np.empty([len(visR0, 1)])
+        self.visRMS = np.empty([len(visR0), 1])
+        self.rc1 = np.empty([len(visR0), 1])
+        self.rc2 = np.empty([len(visR0), 1])
 
         for j in range(len(visR0)):
             self.r0 = visR0[j]
@@ -351,5 +353,23 @@ class cellTrainValidate:
             self.c2 = visC2[j]
 
             self.cellSim()
-            visRMS[j] = self.computeRMS()
-            
+            self.visRMS[j] = self.computeRMS()
+
+            self.rc1[j] = visR1[j] * visC1[j]
+            self.rc2[j] = visR2[j] * visC2[j]
+
+    def runCostVisualize(self):
+        """
+        
+        Calls class functions to visualizing CRMSE cost function
+
+        Args:
+            self (cellTrainValidate): Pointer to cellTrainValidate class object
+        Returns:
+            None
+        
+        """
+        print("starting visualization of cost function")
+        self.loadOCV()
+        self.extractDynamic()
+        self.costVisualize()

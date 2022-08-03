@@ -67,9 +67,11 @@ def main():
 
     cellTrainValidateObj = cellTrainValidate(cellDataObj)
     # cellTrainValidateObj.runSimTrain()
-    cellTrainValidateObj.runSimValidate()
-    plotDataObj.plotLoadedOCV(cellTrainValidateObj)
-    plotDataObj.plotDynamic(cellTrainValidateObj)
+    # cellTrainValidateObj.runSimValidate()
+    cellTrainValidateObj.runCostVisualize()
+    # plotDataObj.plotLoadedOCV(cellTrainValidateObj)
+    # plotDataObj.plotDynamic(cellTrainValidateObj)
+    plotDataObj.plotCostVisulaize(cellTrainValidateObj)
 
     # cellSimHystObj = cellSimHyst(cellDataObj)
     # cellSimHystObj.runSimTrain()
