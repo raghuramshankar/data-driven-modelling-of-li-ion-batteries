@@ -327,23 +327,23 @@ class cellTrainValidate:
         
         """
         # Define range for input
-        bndsR0 = 1
-        bndsR1 = 1
-        bndsR2 = 1
+        bndsR0 = 1e-1
+        bndsR1 = 1e-1
+        bndsR2 = 1e-1
         bndsC1 = 1e4
         bndsC2 = 1e4
 
         # Sample inputs uniformly
-        visR0 = np.arange(0, bndsR0, 0.01)
-        visR1 = np.arange(0, bndsR1, 0.01)
-        visR2 = np.arange(0, bndsR2, 0.01)
-        visC1 = np.arange(0, bndsC1, 0.01)
-        visC2 = np.arange(0, bndsC2, 0.01)
+        visR0 = np.arange(0, bndsR0, 1e-3)
+        visR1 = np.arange(0, bndsR1, 1e-3)
+        visR2 = np.arange(0, bndsR2, 1e-3)
+        visC1 = np.arange(0, bndsC1, 1e-3)
+        visC2 = np.arange(0, bndsC2, 1e-3)
 
         # Initialize CRMSE variable
-        self.visRMS = np.empty([len(visR0), 1])
-        self.rc1 = np.empty([len(visR0), 1])
-        self.rc2 = np.empty([len(visR0), 1])
+        self.visRMS = np.empty([len(visR1)])
+        self.rc1 = np.empty([len(visR1)])
+        self.rc2 = np.empty([len(visR1)])
 
         for j in range(len(visR0)):
             self.r0 = visR0[j]
@@ -355,8 +355,8 @@ class cellTrainValidate:
             self.cellSim()
             self.visRMS[j] = self.computeRMS()
 
-            self.rc1[j] = visR1[j] * visC1[j]
-            self.rc2[j] = visR2[j] * visC2[j]
+            self.rc1[j] = self.r1 * self.c1
+            self.rc2[j] = self.r2 * self.c2
 
     def runCostVisualize(self):
         """

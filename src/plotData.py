@@ -124,8 +124,8 @@ class plotData():
         fig5 = plt.figure(figsize=(self.l, self.h))
 
         fig5_f1 = fig5.add_subplot(111)
-        fig5_f1.plot(cellTrainValidateObj.rc1, cellTrainValidateObj.visRMS, "b", label="CRMSE vs RC1")
-        fig5_f1.set_xlabel("Time [s]")
+        fig5_f1.plot(cellTrainValidateObj.rc1, cellTrainValidateObj.visRMS, "b", label="CRMSE for different RC1")
+        fig5_f1.set_xlabel("RC1 time constant [s]")
         fig5_f1.set_ylabel("CRMSE [V]")
         fig5_f1.legend()
         fig5_f1.grid(True)    
