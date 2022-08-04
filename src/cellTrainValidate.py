@@ -328,22 +328,22 @@ class cellTrainValidate:
         """
         # Define range for input
         bndsR0 = 1e-1
-        bndsR1 = 1e-1
+        bndsR1 = 50e-2
         bndsR2 = 1e-1
         bndsC1 = 1e4
         bndsC2 = 1e4
 
         # Sample inputs uniformly
-        visR0 = np.arange(0, bndsR0, 1e-3)
-        visR1 = np.arange(0, bndsR1, 1e-3)
-        visR2 = np.arange(0, bndsR2, 1e-3)
-        visC1 = np.arange(0, bndsC1, 1e-3)
-        visC2 = np.arange(0, bndsC2, 1e-3)
+        visR0 = np.linspace(0, bndsR0, 100)
+        visR1 = np.linspace(0, bndsR1, 100)
+        visR2 = np.linspace(0, bndsR2, 100)
+        visC1 = np.linspace(0, bndsC1, 100)
+        visC2 = np.linspace(0, bndsC2, 100)
 
         # Initialize CRMSE variable
-        self.visRMS = np.empty([len(visR1)])
+        self.visRMS = np.empty([len(visR0)])
         self.rc1 = np.empty([len(visR1)])
-        self.rc2 = np.empty([len(visR1)])
+        self.rc2 = np.empty([len(visR2)])
 
         for j in range(len(visR0)):
             self.r0 = visR0[j]
